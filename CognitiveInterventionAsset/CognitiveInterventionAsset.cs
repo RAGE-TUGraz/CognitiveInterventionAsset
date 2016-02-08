@@ -4,13 +4,15 @@
 // <author>mmaurer</author>
 // <date>08.02.2016 11:22:54</date>
 // <summary>Implements the CognitiveInterventionAsset class</summary>
-namespace AssetPackage
+namespace CognitiveInterventionAssetNameSpace
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using AssetManagerPackage;
+    using AssetPackage;
+
     /// <summary>
     /// An asset.
     /// </summary>
