@@ -44,6 +44,9 @@
     <Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+	<Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\CognitiveInterventionAssetFunctionality.cs">
+      <Link>CognitiveInterventionAssetFunctionality.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\Resources\CognitiveInterventionAsset.VersionAndDependencies.xml">

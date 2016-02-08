@@ -11,7 +11,6 @@ namespace AssetPackage
     using System.Linq;
 
     using AssetManagerPackage;
-
     /// <summary>
     /// An asset.
     /// </summary>

@@ -41,6 +41,7 @@
     <Compile Include="CognitiveInterventionAsset.cs" />
     <Compile Include="CognitiveInterventionAssetSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CognitiveInterventionAssetFunctionality.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\CognitiveInterventionAsset.VersionAndDependencies.xml">
