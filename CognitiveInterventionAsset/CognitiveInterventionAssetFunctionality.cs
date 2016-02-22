@@ -15,13 +15,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   
-  Development done by Cognitive Science Section (CSS) 
-  at Knowlge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
+  This software has been created in the context of the EU-funded RAGE project.
+  Realising and Applied Gaming Eco-System (RAGE), Grant agreement No 644187, 
+  http://rageproject.eu/
+
+  Development was done by Cognitive Science Section (CSS) 
+  at Knowledge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
   http://kti.tugraz.at/css/
 
   Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
   Changed by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
-  Changed on: 2016-02-10
+  Changed on: 2016-02-22
 */
 
 
@@ -32,7 +36,58 @@ using System.Text;
 
 namespace CognitiveInterventionAssetNameSpace
 {
-    class CognitiveInterventionAssetFunctionality
+    /// <summary>
+    /// Singelton Class for handling Cognitive Interventions
+    /// </summary>
+    internal class CognitiveInterventionHandler
     {
+
+        #region Fields
+
+        /// <summary>
+        /// Instance of the CognitiveInterventionHandler - Singelton pattern
+        /// </summary>
+        private static CognitiveInterventionHandler instance;
+
+        #endregion Fields
+        #region Constructors
+
+        /// <summary>
+        /// Private ctor - Singelton pattern
+        /// </summary>
+        private CognitiveInterventionHandler() { }
+
+        #endregion Constructors
+        #region Properties
+
+        /// <summary>
+        /// Getter for Instance of the CognitiveInterventionHandler - Singelton pattern
+        /// </summary>
+        public static CognitiveInterventionHandler Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new CognitiveInterventionHandler();
+                }
+                return instance;
+            }
+        }
+
+        #endregion Properties
+        #region Methods
+
+        /// <summary>
+        /// Method for getting cognitive interventions associated with an id. 
+        /// </summary>
+        /// <param name="id"> Identification string for triggering an intervention. </param>
+        /// <returns> A String that should be displayed as cognitive intervention. </returns>
+        internal string getIntervention(string id)
+        {
+            return ("dummy intervention");
+        }
+
+        #endregion Methods
     }
 }
