@@ -35,10 +35,11 @@ namespace CognitiveInterventionAssetNameSpace
 
     using AssetManagerPackage;
     using AssetPackage;
-
-    /// <summary>
-    /// An asset.
-    /// </summary>
+    using System.Xml.Serialization;
+    using System.IO;
+    using System.Xml;/// <summary>
+                     /// An asset.
+                     /// </summary>
     public class CognitiveInterventionAsset : BaseAsset
     {
         #region Fields
@@ -72,7 +73,6 @@ namespace CognitiveInterventionAssetNameSpace
         }
 
         #endregion Constructors
-
         #region Properties
 
         /// <summary>
@@ -101,7 +101,6 @@ namespace CognitiveInterventionAssetNameSpace
         }
 
         #endregion Properties
-
         #region Methods
 
         // Your code goes here.
@@ -116,6 +115,15 @@ namespace CognitiveInterventionAssetNameSpace
             return (CognitiveInterventionHandler.Instance.getIntervention(id));
         }
 
+        /// <summary>
+        /// Performing all test of the cognitive intervention asset.
+        /// </summary>
+        public void performAllTests()
+        {
+            CognitiveInterventionHandler.Instance.performAllTests();
+        }
+
         #endregion Methods
     }
+
 }
