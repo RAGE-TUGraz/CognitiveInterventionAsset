@@ -106,16 +106,6 @@ namespace CognitiveInterventionAssetNameSpace
         // Your code goes here.
 
         /// <summary>
-        /// Method for getting cognitive interventions associated with an id. 
-        /// </summary>
-        /// <param name="id"> Identification string for triggering an intervention. </param>
-        /// <returns> A String that should be displayed as cognitive intervention. </returns>
-        public string getIntervention(string id)
-        {
-            return (CognitiveInterventionHandler.Instance.getIntervention(id));
-        }
-
-        /// <summary>
         /// Performing all test of the cognitive intervention asset.
         /// </summary>
         public void performAllTests()

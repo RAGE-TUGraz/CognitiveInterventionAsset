@@ -104,16 +104,6 @@ namespace CognitiveInterventionAssetNameSpace
         #region Methods
 
         /// <summary>
-        /// Method for getting cognitive interventions associated with an id. 
-        /// </summary>
-        /// <param name="id"> Identification string for triggering an intervention. </param>
-        /// <returns> A String that should be displayed as cognitive intervention. </returns>
-        internal string getIntervention(string id)
-        {
-            return ("dummy intervention");
-        }
-
-        /// <summary>
         /// Method returning an instance of the CognitiveInterventionAsset.
         /// </summary>
         /// <returns> Instance of the CognitiveInterventionAsset </returns>
