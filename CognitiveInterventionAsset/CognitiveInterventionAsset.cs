@@ -123,6 +123,24 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.performAllTests();
         }
 
+        /// <summary>
+        /// Methode for setting the Method for handling cognitive interventions
+        /// </summary>
+        /// <param name="del"> Method (signature: void del(string interventionInstance)) performed if an intervention is needed. </param>
+        public void setInterventionDelegate(CognitiveInterventionDelegate del)
+        {
+            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate = del;
+        }
+
+        /// <summary>
+        /// Method for sending direct traces to the asset
+        /// </summary>
+        /// <param name="trace"></param>
+        public void sendTrace(string trace)
+        {
+            CognitiveInterventionHandler.Instance.addNewTrack(trace);
+        }
+
         #endregion Methods
     }
 

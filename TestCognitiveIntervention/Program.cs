@@ -46,10 +46,16 @@ namespace TestCognitiveIntervention
             AssetManager.Instance.Bridge = new Bridge();
 
             CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
-            //string id = "dummy id";
-            //Console.WriteLine("Reciving intervention '" + cia.getIntervention(id) +"' for id '" + id +"'");
 
-            cia.performAllTests();
+            //setting feedback method
+            CognitiveInterventionDelegate cognitiveInterventionDelegate = interventionInstance => Console.WriteLine("DelegateLogging: " + interventionInstance);
+            cia.setInterventionDelegate(cognitiveInterventionDelegate);
+
+            //cia.performAllTests();
+            cia.sendTrace("goTo1");
+            cia.sendTrace("goTo2");
+            cia.sendTrace("goTo6");
+            cia.sendTrace("goTo7");
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();

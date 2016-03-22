@@ -69,6 +69,11 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         internal CognitiveInterventionTree cognitiveInterventionTree = null;
 
+        /// <summary>
+        /// Delegate handling the intervention feedback
+        /// </summary>
+        internal CognitiveInterventionDelegate cognitiveInterventionDelegate = null;
+
         #endregion Fields
         #region Constructors
 
@@ -147,14 +152,16 @@ namespace CognitiveInterventionAssetNameSpace
         {
             loggingCI("New track added: '"+track+"'.");
             CognitiveInterventionTree tree = getCognitiveInterventionTree();
-            //Liste wird wärend iterieren geändert!!!!!
-            //TODO TODO TODO
-            foreach(CognitiveInterventionNode node in tree.activeNodes)
+
+            List<string> listOfActiveNodeIds = tree.getListOfActiveNodeIds();
+            foreach(string nodeId in listOfActiveNodeIds)
             {
-                if (node.edges.ContainsKey(track))
-                    if(node.edges[track].active)
-                        tree.setActive(node,track);
+                
+                if (tree.getCognitiveInterventionNodeById(nodeId).edges.ContainsKey(track))
+                    if (tree.getCognitiveInterventionNodeById(nodeId).edges[track].active)
+                        tree.setActive(tree.getCognitiveInterventionNodeById(nodeId), track);
             }
+            tree.logActiveNodes();
         }
 
         #endregion Methods
@@ -298,8 +305,13 @@ namespace CognitiveInterventionAssetNameSpace
         internal void performAllTests()
         {
             loggingCI("Start performing Cognitive Intervention Asset tests:");
+            CognitiveInterventionDelegate oldDel = cognitiveInterventionDelegate;
+            cognitiveInterventionDelegate = interventionInstance => loggingCI("DelegateLogging: "+ interventionInstance);
             performTest1();
             performTest2();
+            performTest3();
+            performTest4();
+            cognitiveInterventionDelegate = oldDel;
             loggingCI("Cognitive Intervention Asset tests ended.");
         }
 
@@ -312,7 +324,7 @@ namespace CognitiveInterventionAssetNameSpace
         }
 
         /// <summary>
-        /// Creating example CI-structure and sending traces.
+        /// Creating example CI-structure and only sending "useful"  traces.
         /// </summary>
         internal void performTest2()
         {
@@ -321,6 +333,49 @@ namespace CognitiveInterventionAssetNameSpace
             this.cognitiveInterventionTree = newTree;
 
             this.addNewTrack("goTo1");
+            this.addNewTrack("goTo2");
+            this.addNewTrack("goTo6");
+            this.addNewTrack("goTo7");
+
+            this.cognitiveInterventionTree = oldTree;
+        }
+
+        /// <summary>
+        /// Creating example CI-structure and not only sending "useful"  traces.
+        /// </summary>
+        internal void performTest3()
+        {
+            CognitiveInterventionTree oldTree = getCognitiveInterventionTree();
+            CognitiveInterventionTree newTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
+            this.cognitiveInterventionTree = newTree;
+
+            this.addNewTrack("goTo1");
+            this.addNewTrack("goTo2");
+            this.addNewTrack("goTo2");
+            this.addNewTrack("goTo5");
+            this.addNewTrack("goTo6");
+            this.addNewTrack("goTo7");
+
+            this.cognitiveInterventionTree = oldTree;
+        }
+
+        /// <summary>
+        /// Creating example CI-structure and not only sending "useful"  traces plus starting new trace series.
+        /// </summary>
+        internal void performTest4()
+        {
+            CognitiveInterventionTree oldTree = getCognitiveInterventionTree();
+            CognitiveInterventionTree newTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
+            this.cognitiveInterventionTree = newTree;
+
+            this.addNewTrack("goTo1");
+            this.addNewTrack("goTo2");
+            this.addNewTrack("goTo4");
+            this.addNewTrack("goTo5");
+            this.addNewTrack("goTo6");
+            this.addNewTrack("goTo1");
+            this.addNewTrack("goTo3");
+            this.addNewTrack("goTo7");
 
             this.cognitiveInterventionTree = oldTree;
         }
@@ -328,6 +383,11 @@ namespace CognitiveInterventionAssetNameSpace
         #endregion Testmethods
     }
 
+    /// <summary>
+    /// Delegate - called with the intervention instance as argument
+    /// </summary>
+    /// <param name="interventionInstance"> intervention instance proposed by the asset</param>
+    public delegate void CognitiveInterventionDelegate(string interventionInstance);
 
     /// <summary>
     /// Class managing the intervention activation.
@@ -350,6 +410,11 @@ namespace CognitiveInterventionAssetNameSpace
         /// Collection of all interventions and instances for the cognitive intervention asset.
         /// </summary>
         internal Dictionary<string, List<string>> interventions = new Dictionary<string, List<string>>();
+
+        /// <summary>
+        /// Dictionary for counting how often concrete intervention instances are triggered.
+        /// </summary>
+        internal Dictionary<string, int> interventionInstanceCounter = null;
 
         /// <summary>
         /// Node which is active all the time.
@@ -441,15 +506,18 @@ namespace CognitiveInterventionAssetNameSpace
         {
             CognitiveInterventionHandler.Instance.loggingCI("Activating Node '" + nodeToActivate.id + "'.");
 
-            if (this.activeNodes.Contains(nodeToActivate))
+            if (!this.activeNodes.Contains(nodeToActivate))
                 this.activeNodes.Add(nodeToActivate);
 
             foreach (string trackIterator in nodeToActivate.edges.Keys)
                 nodeToActivate.edges[trackIterator].active = true;
+            
 
-            //TODO: what to do when intervention reached?!
             if (nodeToActivate.interventionType != null)
-                CognitiveInterventionHandler.Instance.loggingCI("Intervention reached!");
+            {
+                performIntervention(nodeToActivate.interventionType);
+                deactivateNode(nodeToActivate);
+            }
         }
 
         /// <summary>
@@ -462,10 +530,13 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.loggingCI("New update: starting from Node '"+startingNode.id+"' because of track '"+track+"'.");
 
             CognitiveInterventionEdge edge = startingNode.edges[track];
-            edge.active = false;
+
+            //set edge inactive, if not started from starting node
+            if(!this.startingNode.id.Equals(startingNode.id))
+                edge.active = false;
 
             //deactivate node if it is an exclusive edge
-            if (edge.exclusive)
+            if (edge.exclusive && !this.startingNode.id.Equals(startingNode.id))
                 deactivateNode(startingNode);
 
             //deactivate node if all edges are deactivated
@@ -473,11 +544,82 @@ namespace CognitiveInterventionAssetNameSpace
             foreach(string trackIterator in startingNode.edges.Keys)
                 if (startingNode.edges[trackIterator].active)
                     anActiveEdgeExists = true;
-            if (!anActiveEdgeExists)
+            if (!anActiveEdgeExists && !this.startingNode.id.Equals(startingNode.id))
                 deactivateNode(startingNode);
 
             //activate new edge
             activateNode(edge.successor);
+        }
+
+        /// <summary>
+        /// Method for diagnostic logging.
+        /// </summary>
+        internal void logActiveNodes()
+        {
+            string txt = "";
+            txt += "Active nodes:\n ";
+            foreach (CognitiveInterventionNode node in this.activeNodes)
+                txt += node.id+" | ";
+            CognitiveInterventionHandler.Instance.loggingCI(txt);
+        }
+
+        /// <summary>
+        /// Method for returning a List of active node ids.
+        /// </summary>
+        /// <returns> List of active node ids </returns>
+        internal List<string> getListOfActiveNodeIds()
+        {
+            List<string> listToReturn = new List<string>();
+
+            foreach (CognitiveInterventionNode node in activeNodes)
+                listToReturn.Add(node.id);
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Method triggering an intervention if neccessary.
+        /// </summary>
+        /// <param name="interventionType"> String identifyier for the intervention type. </param>
+        internal void performIntervention(string interventionType)
+        {
+            List<string> interventionInstances = this.interventions[interventionType];
+
+            //initialize instance counter, if not done yet
+            if (interventionInstanceCounter == null)
+            {
+                interventionInstanceCounter = new Dictionary<string, int>();
+                foreach(string interventionTypeString in this.interventions.Keys)
+                    foreach(string interventionInstanceString in this.interventions[interventionTypeString])
+                        interventionInstanceCounter[interventionInstanceString] = 0;
+            }
+
+            //get those intervention, which are choosen the least often
+            int leastOftenChosenInstanceNr = -1;
+            foreach (string instance in interventionInstances)
+                if (leastOftenChosenInstanceNr == -1 || leastOftenChosenInstanceNr > interventionInstanceCounter[instance])
+                    leastOftenChosenInstanceNr = interventionInstanceCounter[instance];
+
+            List<string> leastOftenChosenInstances = new List<string>();
+            foreach (string instance in interventionInstances)
+                if (interventionInstanceCounter[instance] == leastOftenChosenInstanceNr)
+                    leastOftenChosenInstances.Add(instance);
+
+            //choose random instance
+            Random rnd = new Random();
+            int pos = rnd.Next(leastOftenChosenInstances.Count);
+            string chosenInstance = leastOftenChosenInstances[pos];
+
+            //upate counter
+            interventionInstanceCounter[chosenInstance]++;
+            
+            CognitiveInterventionHandler.Instance.loggingCI("Proposed intervention-instance: " + chosenInstance);
+            if(CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate == null)
+            {
+                CognitiveInterventionHandler.Instance.loggingCI("There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!", Severity.Error);
+                throw new Exception("EXCEPTION: There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!");
+            }
+            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate(chosenInstance);
         }
 
         //TODO
