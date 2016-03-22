@@ -4,6 +4,13 @@
 <meta charset='UTF-8'> 
 <title>Cognitive Intervention XML creator</title>
 
+<style type='text/css'>
+h1 {color:gray;}
+div#body {display:block;}
+div.menu {background-color: lightblue; border-style: solid; margin-bottom: 5px; padding: 5px; display: inline-block;}
+div#dataInputField {background-color: lightgreen; display:block; border-style: solid; padding: 5px; margin-bottom: 5px;}
+</style>
+
 <script>
 //Method for storing text via the download functionality
 function saveTextAsFile(textToWrite){
@@ -46,20 +53,51 @@ function startDownload() {
 	saveTextAsFile(xml);
 }
 
+//Method creating the data input for menu 'number'
+function fillMenu(number){
+	//recolor all menu points
+	var menuPoints = document.getElementsByClassName("menu")
+	for (var i = 0; i < menuPoints.length; i++) {
+		menuPoints[i].style.backgroundColor="lightblue";
+	}
+	document.getElementById("m"+number).style.backgroundColor="lightgreen";
+	
+	//create content for the div
+	var txt = "content for menu " + number
+	document.getElementById("dataInputField").innerHTML = txt;
+}
 
+//perform actions when document is loaded.
+function performStartupAction(){
+	var menuPoints = document.getElementsByClassName("menu")
+	for (var i = 0; i < menuPoints.length; i++) {
+		menuPoints[i].addEventListener("click",function(){
+			fillMenu(this.id[1]);
+		}); 
+	}
+}
 
 </script>
 
 </head>
 <body>
+<div id='body'>
 <h1>Cognitive Intervention XML creator</h1>
 
-<p id="demo">Enter the requested information and press the download-button to get the XML file.</p>
+<p id="demo">Enter the requested information in all menus and press the download-button to get the XML file.</p>
 
+
+<div id='m1' class='menu'>menu1</div>
+<div id='m2' class='menu'>menu2</div>
+<div id='m3' class='menu'>menu3</div>
 <div id='dataInputField'>
-
+Chose a menu and start filling in the asset specifications.
 </div>
 
 <button type="button" onclick="startDownload()">Download XML file.</button>
+</div>
+<script>
+performStartupAction();
+</script>
 </body>
 </html>
