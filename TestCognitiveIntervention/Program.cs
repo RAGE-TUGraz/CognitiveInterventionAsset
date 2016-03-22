@@ -51,7 +51,7 @@ namespace TestCognitiveIntervention
             CognitiveInterventionDelegate cognitiveInterventionDelegate = interventionInstance => Console.WriteLine("DelegateLogging: " + interventionInstance);
             cia.setInterventionDelegate(cognitiveInterventionDelegate);
 
-            //cia.performAllTests();
+            cia.performAllTests();
             cia.sendTrace("goTo1");
             cia.sendTrace("goTo2");
             cia.sendTrace("goTo6");
@@ -73,7 +73,8 @@ namespace TestCognitiveIntervention
 
         public bool Exists(string fileId)
         {
-            throw new NotImplementedException();
+            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+            return (File.Exists(filePath));
         }
 
         public string[] Files()
@@ -83,7 +84,7 @@ namespace TestCognitiveIntervention
 
         public string Load(string fileId)
         {
-            string path = @"C:\Users\mmaurer\Desktop\" + fileId;
+            string path = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
 
             try
             {   // Open the text file using a stream reader.
@@ -104,7 +105,7 @@ namespace TestCognitiveIntervention
 
         public void Save(string fileId, string fileData)
         {
-            string filePath = @"C:\Users\mmaurer\Desktop\" + fileId;
+            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
             using (StreamWriter file = new StreamWriter(filePath))
             {
                 file.Write(fileData);

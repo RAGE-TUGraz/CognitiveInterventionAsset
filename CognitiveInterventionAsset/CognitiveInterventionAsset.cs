@@ -131,6 +131,15 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.addNewTrack(trace);
         }
 
+        /// <summary>
+        /// Method for reading the Asset settings.
+        /// </summary>
+        /// <returns></returns>
+        internal CognitiveInterventionAssetSettings getSettings()
+        {
+            return (this.settings);
+        }
+
         #endregion Methods
     }
 

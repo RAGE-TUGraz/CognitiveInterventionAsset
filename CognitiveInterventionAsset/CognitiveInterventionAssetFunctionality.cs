@@ -124,14 +124,33 @@ namespace CognitiveInterventionAssetNameSpace
                 loadCognitiveInterventionTree();
             return cognitiveInterventionTree;
         }
-
-        //TODO loading open!
+        
         /// <summary>
         /// Loading the CognitiveInterventionTree for the Asset Handler
         /// </summary>
         internal void loadCognitiveInterventionTree()
         {
-            cognitiveInterventionTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
+            loggingCI("Loading CognitiveIntervention XML-datastructure.");
+            CognitiveInterventionAssetSettings cias = getCIA().getSettings();
+
+            IDataStorage ids = (IDataStorage)AssetManager.Instance.Bridge;
+            if (ids != null)
+            {
+                if (!ids.Exists(cias.XMLFileLocation))
+                {
+                    loggingCI("File " + cias.XMLFileLocation + " not found for loading CognitiveIntervention XML-datastructure.", Severity.Error);
+                    throw new Exception("EXCEPTION: File " + cias.XMLFileLocation + " not found for loading CognitiveIntervention XML-datastructure.");
+                }
+
+                loggingCI("Loading CognitiveIntervention XML-datastructure from File.");
+                cognitiveInterventionTree = new CognitiveInterventionTree(getDatastructureFromXmlString(ids.Load(cias.XMLFileLocation)));
+            }
+            else
+            {
+                loggingCI("IDataStorage bridge absent for loading CognitiveIntervention XML-datastructure.", Severity.Error);
+                throw new Exception("EXCEPTION: IDataStorage bridge absent for loading CognitiveIntervention XML-datastructure.");
+            }
+            
         }
 
         /// <summary>
@@ -152,6 +171,21 @@ namespace CognitiveInterventionAssetNameSpace
                         tree.setActive(tree.getCognitiveInterventionNodeById(nodeId), track);
             }
             tree.logActiveNodes();
+        }
+
+        /// <summary>
+        /// Method for deserilizing the cognitive intervention XML datastructure.
+        /// </summary>
+        /// <param name="str"> the xml-string to be desirilized. </param>
+        /// <returns> The desirilized data structure. </returns>
+        internal XMLCognitiveInterventionData getDatastructureFromXmlString(String str)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(XMLCognitiveInterventionData));
+            using (TextReader reader = new StringReader(str))
+            {
+                XMLCognitiveInterventionData result = (XMLCognitiveInterventionData)serializer.Deserialize(reader);
+                return (result);
+            }
         }
 
         #endregion Methods
