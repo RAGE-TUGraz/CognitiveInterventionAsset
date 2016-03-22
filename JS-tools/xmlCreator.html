@@ -1,0 +1,65 @@
+<!DOCTYPE html>  
+<html>
+<head>
+<meta charset='UTF-8'> 
+<title>Cognitive Intervention XML creator</title>
+
+<script>
+//Method for storing text via the download functionality
+function saveTextAsFile(textToWrite){
+
+
+
+    //var textToWrite = document.getElementById("inputTextToSave").value;
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+    var fileNameToSaveAs = "CognitiveInterventionXML.xml"
+      var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    if (window.webkitURL != null)
+    {
+        // Chrome allows the link to be clicked
+        // without actually adding it to the DOM.
+        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        // Firefox requires the link to be added to the DOM
+        // before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        //downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+
+    downloadLink.click();
+}
+
+//Method for creating the XML-string out of the information gathered from the user
+function createXML(){
+	return "dummy string";
+}
+
+//Method initiating the download
+function startDownload() {
+	xml = createXML();
+	saveTextAsFile(xml);
+}
+
+
+
+</script>
+
+</head>
+<body>
+<h1>Cognitive Intervention XML creator</h1>
+
+<p id="demo">Enter the requested information and press the download-button to get the XML file.</p>
+
+<div id='dataInputField'>
+
+</div>
+
+<button type="button" onclick="startDownload()">Download XML file.</button>
+</body>
+</html>
