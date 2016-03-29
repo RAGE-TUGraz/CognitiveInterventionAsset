@@ -48,7 +48,7 @@ namespace TestCognitiveIntervention
             CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
 
             //setting feedback method
-            CognitiveInterventionDelegate cognitiveInterventionDelegate = interventionInstance => Console.WriteLine("DelegateLogging: " + interventionInstance);
+            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => Console.WriteLine("DelegateLogging: " + interventionType + ", "+ interventionInstance);
             cia.setInterventionDelegate(cognitiveInterventionDelegate);
 
             cia.performAllTests();

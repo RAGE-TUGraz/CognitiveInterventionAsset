@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -46,7 +47,14 @@ namespace CognitiveInterventionAssetNameSpace
     /// </summary>
     internal class CognitiveInterventionHandler
     {
+        #region AlgorithmParameter
 
+        /// <summary>
+        /// Describes how long a node is active before deactivating again.
+        /// </summary>
+        internal int timeToDeactivationOfNodesInMiliSec = 1000;
+
+        #endregion AlgorithmParameter
         #region Fields
 
         /// <summary>
@@ -165,10 +173,12 @@ namespace CognitiveInterventionAssetNameSpace
             List<string> listOfActiveNodeIds = tree.getListOfActiveNodeIds();
             foreach(string nodeId in listOfActiveNodeIds)
             {
-                
-                if (tree.getCognitiveInterventionNodeById(nodeId).edges.ContainsKey(track))
-                    if (tree.getCognitiveInterventionNodeById(nodeId).edges[track].active)
-                        tree.setActive(tree.getCognitiveInterventionNodeById(nodeId), track);
+                CognitiveInterventionNode node = tree.getCognitiveInterventionNodeById(nodeId);
+
+                if(node.isStillActive())
+                    if (node.edges.ContainsKey(track))
+                        if (node.edges[track].active)
+                            tree.setActive(node, track);
             }
             tree.logActiveNodes();
         }
@@ -256,6 +266,7 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge2n0 = new XMLCognitiveInterventionEdge("goTo4", "exclusive", "node4");
             edgeList0.cognitiveInterventionEdges.Add(edge2n0);
             node0.cognitiveInterventionEdgeList = edgeList0;
+            node0.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
             XMLCognitiveInterventionNode node1 = new XMLCognitiveInterventionNode("node1");
             XMLCognitiveInterventionEdgeList edgeList1 = new XMLCognitiveInterventionEdgeList();
@@ -265,6 +276,7 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge2n1 = new XMLCognitiveInterventionEdge("goTo3", "exclusive", "node3");
             edgeList1.cognitiveInterventionEdges.Add(edge2n1);
             node1.cognitiveInterventionEdgeList = edgeList1;
+            node1.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
             XMLCognitiveInterventionNode node2 = new XMLCognitiveInterventionNode("node2");
             XMLCognitiveInterventionEdgeList edgeList2 = new XMLCognitiveInterventionEdgeList();
@@ -272,6 +284,7 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge1n2 = new XMLCognitiveInterventionEdge("goTo6", "exclusive", "node6");
             edgeList2.cognitiveInterventionEdges.Add(edge1n2);
             node2.cognitiveInterventionEdgeList = edgeList2;
+            node2.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
             XMLCognitiveInterventionNode node6 = new XMLCognitiveInterventionNode("node6");
             XMLCognitiveInterventionEdgeList edgeList6 = new XMLCognitiveInterventionEdgeList();
@@ -279,6 +292,7 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge1n6 = new XMLCognitiveInterventionEdge("goTo7", "exclusive", "node7");
             edgeList6.cognitiveInterventionEdges.Add(edge1n6);
             node6.cognitiveInterventionEdgeList = edgeList6;
+            node6.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
             XMLCognitiveInterventionNode node3 = new XMLCognitiveInterventionNode("node3");
             XMLCognitiveInterventionEdgeList edgeList3 = new XMLCognitiveInterventionEdgeList();
@@ -286,6 +300,7 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge1n3 = new XMLCognitiveInterventionEdge("goTo5", "exclusive", "node5");
             edgeList3.cognitiveInterventionEdges.Add(edge1n3);
             node3.cognitiveInterventionEdgeList = edgeList3;
+            node3.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
             XMLCognitiveInterventionNode node4 = new XMLCognitiveInterventionNode("node4");
             XMLCognitiveInterventionEdgeList edgeList4 = new XMLCognitiveInterventionEdgeList();
@@ -293,16 +308,19 @@ namespace CognitiveInterventionAssetNameSpace
             XMLCognitiveInterventionEdge edge1n4 = new XMLCognitiveInterventionEdge("goTo5", "exclusive", "node5");
             edgeList4.cognitiveInterventionEdges.Add(edge1n4);
             node4.cognitiveInterventionEdgeList = edgeList4;
+            node4.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
+            node4.interventionType = "type2";
 
             XMLCognitiveInterventionNode node7 = new XMLCognitiveInterventionNode("node7");
             XMLCognitiveInterventionEdgeList edgeList7 = new XMLCognitiveInterventionEdgeList();
             edgeList7.cognitiveInterventionEdges = new List<XMLCognitiveInterventionEdge>();
+            node7.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
             node7.interventionType = "type1";
 
             XMLCognitiveInterventionNode node5 = new XMLCognitiveInterventionNode("node5");
             XMLCognitiveInterventionEdgeList edgeList5 = new XMLCognitiveInterventionEdgeList();
             edgeList5.cognitiveInterventionEdges = new List<XMLCognitiveInterventionEdge>();
-            node5.interventionType = "type2";
+            node5.activationDuration = this.timeToDeactivationOfNodesInMiliSec;
 
 
 
@@ -330,11 +348,13 @@ namespace CognitiveInterventionAssetNameSpace
         {
             loggingCI("Start performing Cognitive Intervention Asset tests:");
             CognitiveInterventionDelegate oldDel = cognitiveInterventionDelegate;
-            cognitiveInterventionDelegate = interventionInstance => loggingCI("DelegateLogging: "+ interventionInstance);
+            cognitiveInterventionDelegate = (interventionType, interventionInstance) => loggingCI("DelegateLogging: "+ interventionType +", " + interventionInstance);
             performTest1();
             performTest2();
             performTest3();
             performTest4();
+            performTest5();
+            performTest6();
             cognitiveInterventionDelegate = oldDel;
             loggingCI("Cognitive Intervention Asset tests ended.");
         }
@@ -404,6 +424,40 @@ namespace CognitiveInterventionAssetNameSpace
             this.cognitiveInterventionTree = oldTree;
         }
 
+        /// <summary>
+        /// Creating example CI-structure and waiting till one node is deactivated.
+        /// </summary>
+        internal void performTest5()
+        {
+            CognitiveInterventionTree oldTree = getCognitiveInterventionTree();
+            CognitiveInterventionTree newTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
+            this.cognitiveInterventionTree = newTree;
+
+            this.addNewTrack("goTo1");
+            Thread.Sleep(2*this.timeToDeactivationOfNodesInMiliSec);
+            Console.WriteLine("Before sleep - test 5");
+            this.addNewTrack("goTo7");
+
+            this.cognitiveInterventionTree = oldTree;
+        }
+
+        /// <summary>
+        /// Method Testing if derivation from anticipated behaviour intervention triggers
+        /// </summary>
+        internal void performTest6()
+        {
+            CognitiveInterventionTree oldTree = getCognitiveInterventionTree();
+            CognitiveInterventionTree newTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
+            this.cognitiveInterventionTree = newTree;
+
+            this.addNewTrack("goTo4");
+            Thread.Sleep(2 * this.timeToDeactivationOfNodesInMiliSec);
+            Console.WriteLine("Before sleep - test 6");
+            this.addNewTrack("goTo7");
+
+            this.cognitiveInterventionTree = oldTree;
+        }
+
         #endregion Testmethods
     }
 
@@ -411,7 +465,7 @@ namespace CognitiveInterventionAssetNameSpace
     /// Delegate - called with the intervention instance as argument
     /// </summary>
     /// <param name="interventionInstance"> intervention instance proposed by the asset</param>
-    public delegate void CognitiveInterventionDelegate(string interventionInstance);
+    public delegate void CognitiveInterventionDelegate(string interventionType, string interventionInstance);
 
     /// <summary>
     /// Class managing the intervention activation.
@@ -516,8 +570,10 @@ namespace CognitiveInterventionAssetNameSpace
         /// Deactivates a given node.
         /// </summary>
         /// <param name="nodeTodeactivate"> Node which gets deactivated </param>
-        private void deactivateNode(CognitiveInterventionNode nodeToDeactivate)
+        internal void deactivateNode(CognitiveInterventionNode nodeToDeactivate)
         {
+            if (nodeToDeactivate.id.Equals(this.startingNode.id))
+                return;
             CognitiveInterventionHandler.Instance.loggingCI("Deactivating Node '"+nodeToDeactivate.id+"'.");
             this.activeNodes.Remove(nodeToDeactivate);
         }
@@ -526,7 +582,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// Activates a given node.
         /// </summary>
         /// <param name="nodeToActivate"> Node which gets activated </param>
-        private void activateNode(CognitiveInterventionNode nodeToActivate)
+        internal void activateNode(CognitiveInterventionNode nodeToActivate)
         {
             CognitiveInterventionHandler.Instance.loggingCI("Activating Node '" + nodeToActivate.id + "'.");
 
@@ -535,11 +591,15 @@ namespace CognitiveInterventionAssetNameSpace
 
             foreach (string trackIterator in nodeToActivate.edges.Keys)
                 nodeToActivate.edges[trackIterator].active = true;
-            
 
-            if (nodeToActivate.interventionType != null)
+            nodeToActivate.setDeactivationTimestamp();
+
+            //perform intervention ...
+            if (nodeToActivate.edges.Count == 0)
             {
-                performIntervention(nodeToActivate.interventionType);
+                //...if there is any to perform
+                if (nodeToActivate.interventionType != null)
+                    performIntervention(nodeToActivate.interventionType);
                 deactivateNode(nodeToActivate);
             }
         }
@@ -562,14 +622,15 @@ namespace CognitiveInterventionAssetNameSpace
             //deactivate node if it is an exclusive edge
             if (edge.exclusive && !this.startingNode.id.Equals(startingNode.id))
                 deactivateNode(startingNode);
-
-            //deactivate node if all edges are deactivated
-            bool anActiveEdgeExists = false;
-            foreach(string trackIterator in startingNode.edges.Keys)
-                if (startingNode.edges[trackIterator].active)
-                    anActiveEdgeExists = true;
-            if (!anActiveEdgeExists && !this.startingNode.id.Equals(startingNode.id))
-                deactivateNode(startingNode);
+            else {
+                //deactivate node if all edges are deactivated
+                bool anActiveEdgeExists = false;
+                foreach (string trackIterator in startingNode.edges.Keys)
+                    if (startingNode.edges[trackIterator].active)
+                        anActiveEdgeExists = true;
+                if (!anActiveEdgeExists && !this.startingNode.id.Equals(startingNode.id))
+                    deactivateNode(startingNode);
+            }
 
             //activate new edge
             activateNode(edge.successor);
@@ -643,15 +704,7 @@ namespace CognitiveInterventionAssetNameSpace
                 CognitiveInterventionHandler.Instance.loggingCI("There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!", Severity.Error);
                 throw new Exception("EXCEPTION: There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!");
             }
-            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate(chosenInstance);
-        }
-
-        //TODO
-        internal string toXMLString()
-        {
-            XMLCognitiveInterventionData xmlData = new XMLCognitiveInterventionData();
-            //TODO....
-            return null;
+            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate(interventionType, chosenInstance);
         }
 
         #endregion Methods
@@ -679,6 +732,18 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         internal string interventionType;
 
+        /// <summary>
+        /// time till deactivation of the node
+        /// </summary>
+        internal DateTime deactivationTimestamp;
+
+
+
+        /// <summary>
+        /// Describes how long a node is active before deactivating again.
+        /// </summary>
+        internal double timeToDeactivationInMiliSec = (double) CognitiveInterventionHandler.Instance.timeToDeactivationOfNodesInMiliSec;
+
         #endregion Fields
         #region Constructors
 
@@ -688,6 +753,48 @@ namespace CognitiveInterventionAssetNameSpace
         }
 
         #endregion Constructors
+        #region Methods
+
+
+        /// <summary>
+        /// Method returning the current timestamp
+        /// </summary>
+        internal void setDeactivationTimestamp()
+        {
+            DateTime now = DateTime.Now;
+            this.deactivationTimestamp = now.AddMilliseconds(timeToDeactivationInMiliSec);
+        }
+
+        /// <summary>
+        /// Method checking if the node is still active
+        /// </summary>
+        /// <returns></returns>
+        internal bool isStillActive()
+        {
+            //return true;
+            
+            if(DateTime.Now < deactivationTimestamp || CognitiveInterventionHandler.Instance.cognitiveInterventionTree.startingNode.id.Equals(this.id))
+                return true;
+
+            CognitiveInterventionHandler.Instance.loggingCI("Deactivating node '"+id+"' because too much time passed by without any relevant action.");
+            //trigger intervention because of divergence to anticipated behaviour, if needed
+            if(this.interventionType != null)
+                triggerDerivationFromAnticipatedBehaviourIntervention();
+            CognitiveInterventionHandler.Instance.cognitiveInterventionTree.deactivateNode(this);
+            return false;
+            
+        }
+
+        /// <summary>
+        /// Method which get called, if the node gets deactivated because of too long waiting time (= derivation from anticipated behaviour)
+        /// </summary>
+        internal void triggerDerivationFromAnticipatedBehaviourIntervention()
+        {
+            CognitiveInterventionHandler.Instance.loggingCI("Triggering intervention due to derivation from anticipated behaviour.");
+            CognitiveInterventionHandler.Instance.cognitiveInterventionTree.performIntervention(this.interventionType);
+        }
+
+        #endregion Methods
     }
 
     /// <summary>
@@ -889,6 +996,12 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         [XmlElement("nodeid")]
         public string nodeId { get; set; }
+
+        /// <summary>
+        /// Duration for which the node gets activated
+        /// </summary>
+        [XmlElement("activationDuration")]
+        public int activationDuration { get; set; }
 
         /// <summary>
         /// Class containing all cognitive intervention edges starting from this node.
