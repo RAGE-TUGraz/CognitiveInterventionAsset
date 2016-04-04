@@ -916,7 +916,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <summary>
         /// List of all cognitive intervention instances to the corresponding type.
         /// </summary>
-        [XmlElement("cognitiveinterventiontype")]
+        [XmlElement("cognitiveinterventioninstances")]
         public XMLCognitiveInterventionInstanceList cognitiveInterventionInstanceList { get; set; }
 
         #endregion Fields
