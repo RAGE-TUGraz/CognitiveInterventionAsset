@@ -191,6 +191,7 @@ namespace CognitiveInterventionAssetNameSpace
         internal XMLCognitiveInterventionData getDatastructureFromXmlString(String str)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(XMLCognitiveInterventionData));
+            //Console.WriteLine(str);
             using (TextReader reader = new StringReader(str))
             {
                 XMLCognitiveInterventionData result = (XMLCognitiveInterventionData)serializer.Deserialize(reader);
@@ -375,6 +376,7 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionTree oldTree = getCognitiveInterventionTree();
             CognitiveInterventionTree newTree = new CognitiveInterventionTree(createExampleXMLCognitiveInterventionData());
             this.cognitiveInterventionTree = newTree;
+
 
             this.addNewTrack("goTo1");
             this.addNewTrack("goTo2");

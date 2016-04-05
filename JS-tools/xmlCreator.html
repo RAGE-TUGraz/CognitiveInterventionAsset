@@ -269,7 +269,7 @@ function Menu2() {
 			for(var j=0; j < this.interventionInstances[i].length; j++){
 			    xml += '<cognitiveinterventioninstance>\n<instance>';
 				xml += this.interventionInstances[i][j];
-				xml += '</instance>\n<cognitiveinterventioninstance>\n';
+				xml += '</instance>\n</cognitiveinterventioninstance>\n';
 			};
 			xml += '</cognitiveinterventioninstances>\n';
 			xml += '</cognitiveinterventiontype>\n';
@@ -489,8 +489,7 @@ function Menu3() {
 	    };
 	    this.getPossibleSucessorIds = function (startNode) {
 	        var list = [];
-	        alert("look here - LINE:492");
-	        if (startNode.graphHight == -1)
+	        if (startNode.maxGraphStartDistance == -1)
                 return(list);
 	        for (var i = 0; i < this.nodeList.length; i++) {
 	            var node = this.nodeList[i];
