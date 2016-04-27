@@ -295,6 +295,7 @@ function Menu2() {
 		for (var i = 0; i < deleteType.length; i++) {
 		    deleteType[i].addEventListener("click", function () {
 		        menu.menuArray[menu.activeMenu].removeInterventionType(this.id.substring(0, this.id.length - 23));
+		        menu.menuArray[menu.activeMenu].chosenInterventionType = null;
 		        fillMenu();
 		    });
 		}
@@ -347,7 +348,9 @@ function Menu2() {
 		html += '<tr class="tableboarder"><th class="hover tableboarder" id="addInterventionType" colspan="3">+</td></tr>';
 		return(html + "</table>")
 	};
-	this.getInterventionInstanceHTMLTable = function(position){
+	this.getInterventionInstanceHTMLTable = function (position) {
+	    if (position == null)
+            return("");
 	    var html ="<table class='tableboarder'>"
 	    html += '<tr class="tableboarder"><th colspan="2" class="tableboarder">Intervention Instances</th></tr>';
 		for (i = 0; i < menu.data.interventionInstances[position].length; i++) {
@@ -1123,8 +1126,8 @@ function Edge(nodeStart, nodeEnd) {
 <div id='m1' class='menu hover'>overview</div>
 <div id='m2' class='menu hover'>interventions</div>
 <div id='m3' class='menu hover'>tracking structure</div>
-<div id='m4' class='menu hover'>download XML</div>
 <div id='m5' class='menu hover'>add tracking series</div>
+<div id='m4' class='menu hover'>download XML</div>
 <div id='dataInputField'>
 Chose a menu and start filling in the asset specifications.
 </div>
