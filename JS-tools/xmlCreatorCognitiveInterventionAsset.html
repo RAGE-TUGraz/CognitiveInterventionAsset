@@ -145,7 +145,7 @@ function performStartupAction(){
 			fillMenu();
 		}); 
 	}
-	menu.menuArray[3].exampleFill();
+	menu.exampleFill();
 }
 
 //menu object - holding all information regarding all menues
@@ -171,7 +171,45 @@ function Menu() {
 	this.getActiveMenu = function () {
 	    return (this.menuArray[this.activeMenu]);
 	};
+	this.exampleFill = function () {
 
+	    menu.data.interventionTypes = ["anticipated error - making new friends", "derivation anticipated - communication"];
+	    menu.data.interventionInstances = [["This action was not realy helpful in your situation.", "Why haven't you invited her to your party during your conversation?"], ["Maybe you should talk to the other people.", "Communication could help you.", "Steven might know more about this topic."]];
+
+	    menu.data.tree.addNode("1");
+	    menu.data.tree.addNode("2");
+	    menu.data.tree.addNode("3");
+	    menu.data.tree.addNode("4");
+	    menu.data.tree.addNode("5");
+	    menu.data.tree.addNode("6");
+	    menu.data.tree.addNode("7");
+	    //menu.data.tree.addNode("8");
+	    //menu.data.tree.addNode("9");
+
+
+	    menu.data.tree.getNodeById("6").interventionType = menu.data.interventionTypes[1];
+	    menu.data.tree.getNodeById("2").interventionType = menu.data.interventionTypes[1];
+
+	    menu.data.tree.getNodeById("5").interventionType = menu.data.interventionTypes[0];
+
+	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "1");
+	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "4");
+	    menu.data.tree.addEdge("1", "2");
+	    menu.data.tree.addEdge("1", "3");
+	    menu.data.tree.addEdge("4", "5");
+	    menu.data.tree.addEdge("3", "5");
+	    menu.data.tree.addEdge("2", "6");
+	    menu.data.tree.addEdge("6", "7");
+
+	    menu.data.tree.getEdgeByStartAndEndNodeId(menu.data.tree.startingNode.id, "1").trigger = "go from start to 1";
+	    menu.data.tree.getEdgeByStartAndEndNodeId(menu.data.tree.startingNode.id, "4").trigger = "go from start to 4";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("1", "2").trigger = "go from 1 to 2";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("1", "3").trigger = "go from 1 to 3";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("4", "5").trigger = "go from 4 to 5";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("3", "5").trigger = "go from 3 to 5";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("2", "6").trigger = "go from 2 to 6";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("6", "7").trigger = "go from 6 to 7";
+	};
 }
 
 //menu object1
@@ -440,36 +478,6 @@ function Menu3() {
 	    }
 	    xml += '</cognitiveinterventionnodes>\n';
 	    return (xml);
-	};
-	this.exampleFill = function () {
-
-	    menu.data.interventionTypes = ["test a", "test b"];
-	    menu.data.interventionInstances = [["a", "aa", "aaa"], ["b", "bb", "bbb"]];
-
-	    menu.data.tree.addNode("1");
-	    menu.data.tree.addNode("2");
-	    menu.data.tree.addNode("3");
-	    menu.data.tree.addNode("4");
-	    menu.data.tree.addNode("5");
-	    menu.data.tree.addNode("6");
-	    menu.data.tree.addNode("7");
-	    //menu.data.tree.addNode("8");
-	    //menu.data.tree.addNode("9");
-
-
-	    menu.data.tree.getNodeById("6").interventionType = menu.data.interventionTypes[1];
-	    menu.data.tree.getNodeById("2").interventionType = menu.data.interventionTypes[1];
-
-	    menu.data.tree.getNodeById("5").interventionType = menu.data.interventionTypes[0];
-
-	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "1");
-	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "4");
-	    menu.data.tree.addEdge("1", "2");
-	    menu.data.tree.addEdge("1", "3");
-	    menu.data.tree.addEdge("4", "5");
-	    menu.data.tree.addEdge("3", "5");
-	    menu.data.tree.addEdge("2", "6");
-	    menu.data.tree.addEdge("6", "7");
 	};
 	this.nodeClicked = function (nodeId) {
 	    menu.data.tree.getNodeById(nodeId).textWeigthToBold();
@@ -1048,7 +1056,10 @@ function Node(id) {
     this.toXML = function () {
         var xml = '<cognitiveinterventionnode>\n';
         xml += '<nodeid>' + this.id + '</nodeid>\n';
-        xml += '<activationDuration>' + this.deactivationTimeMS + '</activationDuration>\n';
+        if(this.id != menu.data.tree.startingNode.id)
+            xml += '<activationDuration>' + this.deactivationTimeMS + '</activationDuration>\n';
+        else
+            xml += '<activationDuration>0</activationDuration>\n';
         if (this.interventionType == "-")
             xml += '<interventiontype></interventiontype>\n';
         else
