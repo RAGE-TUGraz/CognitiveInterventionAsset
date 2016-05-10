@@ -1,0 +1,1168 @@
+﻿<!DOCTYPE html>  
+<!--
+  Copyright 2016 TUGraz, http://www.tugraz.at/
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  This project has received funding from the European Union’s Horizon
+  2020 research and innovation programme under grant agreement No 644187.
+  You may obtain a copy of the License at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+  This software has been created in the context of the EU-funded RAGE project.
+  Realising and Applied Gaming Eco-System (RAGE), Grant agreement No 644187, 
+  http://rageproject.eu/
+
+  Development was done by Cognitive Science Section (CSS) 
+  at Knowledge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
+  http://kti.tugraz.at/css/
+
+  Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
+  Changed by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>    
+-->
+<html>
+<head>
+<meta charset='UTF-8'> 
+<title>Cognitive Intervention XML creator</title>
+
+<style type='text/css'>
+/* general style information */
+h1 {color:gray;}
+div#body {display:block;}
+div.menu {background-color: lightblue; border-style: solid; margin-bottom: 5px; padding: 5px; display: inline-block;}
+div#dataInputField {background-color: lightgreen; display:block; border-style: solid; padding: 5px; margin-bottom: 5px;}
+/*  menu - specific style information */
+table.tableboarder, th.tableboarder, td.tableboarder {
+    border: 1px solid black;
+    border-collapse: collapse;
+	vertical-align: top;
+}
+table#m3{
+    table-layout: fixed;
+    width: 100%;
+}
+#m5tablegraph{
+    table-layout:fixed;
+    width:100%;
+}
+th, td {
+    padding: 5px; 
+}
+div.circle {
+  width: 10px;
+  height: 10px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: black;
+}
+div#nodeInformationDiv {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.m1div{
+    display: inline-block;
+    width: 48%;
+    padding: 5px;
+    margin: 5px;
+    vertical-align: top;
+}
+
+.centered{
+    text-align:center;
+}
+
+.hover:hover{
+    cursor: pointer;
+}
+
+select:hover{
+    cursor: pointer;
+}
+
+#selectBehaviour{
+    font-size: x-large;
+}
+
+.center{
+    text-align: center;
+}
+#m5graphDiv, #m5infoDiv{
+    vertical-align: top;
+}
+
+.m5datainputtable{
+    border: solid;
+    background-color: white;
+    padding: 1px;
+}
+</style>
+
+<script src="raphael-min.js"></script>
+<script>
+//Method for storing text via the download functionality
+function saveTextAsFile(textToWrite){
+
+
+
+    //var textToWrite = document.getElementById("inputTextToSave").value;
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+    var fileNameToSaveAs = "CognitiveInterventionXML.xml"
+      var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    if (window.webkitURL != null)
+    {
+        // Chrome allows the link to be clicked
+        // without actually adding it to the DOM.
+        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        // Firefox requires the link to be added to the DOM
+        // before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        //downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+
+    downloadLink.click();
+}
+
+//Method for creating the XML-string out of the information gathered from the user
+function createXML(){
+	return menu.toXML();
+}
+
+//Method initiating the download
+function startDownload() {
+	xml = createXML();
+	saveTextAsFile(xml);
+}
+
+//Method creating the data input for menu 
+function fillMenu(){
+	//recolor all menu points
+	var menuPoints = document.getElementsByClassName("menu")
+	for (var i = 0; i < menuPoints.length; i++) {
+		menuPoints[i].style.backgroundColor="lightblue";
+	}
+	document.getElementById("m"+menu.activeMenu).style.backgroundColor="lightgreen";
+	
+	//store other stuff already inputed
+	
+    //create content for the div
+	menu.fillHTML("dataInputField");
+}
+
+//perform actions when document is loaded.
+function performStartupAction(){
+	menu = new Menu();
+	var menuPoints = document.getElementsByClassName("menu")
+	for (var i = 0; i < menuPoints.length; i++) {
+		menuPoints[i].addEventListener("click",function(){
+			menu.activeMenu = this.id[1];
+			fillMenu();
+		}); 
+	}
+	menu.exampleFill();
+}
+
+//menu object - holding all information regarding all menues
+function Menu() {
+    this.activeMenu;
+    this.data = new Data();
+	this.menuArray = [];
+	this.menuArray[1] = new Menu1();
+	this.menuArray[2] = new Menu2();
+	this.menuArray[3] = new Menu3();
+	this.menuArray[4] = new Menu4();
+	this.menuArray[5] = new Menu5();
+	this.fillHTML = function(div){
+		var html = this.menuArray[this.activeMenu].fillHTML(div);
+	};
+	this.toXML = function(){
+	    var xml = '';//'<?xml version="1.0" encoding="utf-16"?>\n';
+	    xml += '<cognitiveinterventiondata>\n';
+	    xml += this.menuArray[2].toXML();
+	    xml += this.menuArray[3].toXML();
+		return (xml + '</cognitiveinterventiondata>\n');
+	};
+	this.getActiveMenu = function () {
+	    return (this.menuArray[this.activeMenu]);
+	};
+	this.exampleFill = function () {
+
+	    menu.data.interventionTypes = ["anticipated error - making new friends", "derivation anticipated - communication"];
+	    menu.data.interventionInstances = [["This action was not realy helpful in your situation.", "Why haven't you invited her to your party during your conversation?"], ["Maybe you should talk to the other people.", "Communication could help you.", "Steven might know more about this topic."]];
+
+	    menu.data.tree.addNode("1");
+	    menu.data.tree.addNode("2");
+	    menu.data.tree.addNode("3");
+	    menu.data.tree.addNode("4");
+	    menu.data.tree.addNode("5");
+	    menu.data.tree.addNode("6");
+	    menu.data.tree.addNode("7");
+	    //menu.data.tree.addNode("8");
+	    //menu.data.tree.addNode("9");
+
+
+	    menu.data.tree.getNodeById("6").interventionType = menu.data.interventionTypes[1];
+	    menu.data.tree.getNodeById("2").interventionType = menu.data.interventionTypes[1];
+
+	    menu.data.tree.getNodeById("5").interventionType = menu.data.interventionTypes[0];
+
+	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "1");
+	    menu.data.tree.addEdge(menu.data.tree.startingNode.id, "4");
+	    menu.data.tree.addEdge("1", "2");
+	    menu.data.tree.addEdge("1", "3");
+	    menu.data.tree.addEdge("4", "5");
+	    menu.data.tree.addEdge("3", "5");
+	    menu.data.tree.addEdge("2", "6");
+	    menu.data.tree.addEdge("6", "7");
+
+	    menu.data.tree.getEdgeByStartAndEndNodeId(menu.data.tree.startingNode.id, "1").trigger = "go from start to 1";
+	    menu.data.tree.getEdgeByStartAndEndNodeId(menu.data.tree.startingNode.id, "4").trigger = "go from start to 4";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("1", "2").trigger = "go from 1 to 2";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("1", "3").trigger = "go from 1 to 3";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("4", "5").trigger = "go from 4 to 5";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("3", "5").trigger = "go from 3 to 5";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("2", "6").trigger = "go from 2 to 6";
+	    menu.data.tree.getEdgeByStartAndEndNodeId("6", "7").trigger = "go from 6 to 7";
+	};
+}
+
+//menu object1
+function Menu1() {
+	this.fillHTML = function (div) {
+	    var html = "<div id='m1Left' class='m1div'></div>";
+	    html += "<div id='m1Right' class='m1div'></div>";
+	    document.getElementById(div).innerHTML = html;
+
+	    this.fillDefaultValues('m1Right');
+	    this.fillToolDescription('m1Left');
+	};
+	this.toXML = function () {
+	    var xml = "";
+
+	    return (xml);
+	};
+	this.fillToolDescription = function (div) {
+	    var html = "<h3 class='centered'> About this tool:</h3>";
+	    document.getElementById(div).innerHTML = html;
+	};
+	this.fillDefaultValues = function (div) {
+	    var html = "<h4 class='centered'> Define default values:</h4>";
+	    html += "<p>Default deactivation time [ms]:</p>";
+	    html += "<input id='defaultDeactivationTimeTextfield' type='text' value='"+ menu.data.defaultDeactivationTime +"'>";
+	    document.getElementById(div).innerHTML = html;
+
+	    document.getElementById('defaultDeactivationTimeTextfield').onchange = function () {
+	        menu.data.defaultDeactivationTime = this.value;
+	    };
+	};
+}
+
+//menu object2
+function Menu2() {
+	this.chosenInterventionType;
+	this.addInterventionType = function(interventionTypeId){
+		menu.data.interventionTypes.push(interventionTypeId);
+		menu.data.interventionInstances.push(["new Intervention Instance"]);
+	};
+	this.removeInterventionType = function (position) {
+	    var interventionTypeName = menu.data.interventionTypes[position];
+		menu.data.interventionTypes.splice(position,1);
+		menu.data.interventionInstances.splice(position, 1);
+	    //remove all assigned values
+		for (var i = 0; i < menu.data.tree.nodeList.length; i++) {
+		    if (interventionTypeName == menu.data.tree.nodeList[i].interventionType) {
+		        menu.data.tree.nodeList[i].interventionType = "-";
+		    }
+		}
+	};
+	this.addInterventionInstance = function(interventionInstance){
+	    menu.data.interventionInstances[this.chosenInterventionType].push(interventionInstance);
+	};
+	this.removeInterventionInstance = function(poisitionInstance){
+	    menu.data.interventionInstances[this.chosenInterventionType].splice(poisitionInstance, 1);
+	};
+	this.fillHTML = function(div){
+		var html = "";
+		html += '<table class="tableboarder"><tr class="tableboarder"><td class="tableboarder">' + this.getInterventionTypeHTMLTable() + '</td>';
+		if (menu.data.interventionTypes.length > 0 && this.chosenInterventionType != null)
+		    html += '<td class="tableboarder">' + this.getInterventionInstanceHTMLTable(this.chosenInterventionType) + '</td>';
+		html += '</tr></table>';
+		document.getElementById(div).innerHTML = html;
+
+
+	    //color the chosen cognitive intervention type 
+		var changeTypeColor = document.getElementsByClassName("changeInterventionType")
+		for (var i = 0; i < changeTypeColor.length; i++) {
+		    changeTypeColor[i].style.backgroundColor = "lightblue";
+		    if (changeTypeColor[i].id.substring(0, changeTypeColor[i].id.length - 23) == this.chosenInterventionType) {
+		        changeTypeColor[i].style.backgroundColor = "lightgreen";
+		    }
+		}
+
+	    //set add intervention type listener
+		document.getElementById("addInterventionType").addEventListener("click", function () {
+		    menu.menuArray[menu.activeMenu].addInterventionType("new Intervention Type");
+		    fillMenu();
+		});
+	    //set delete intervention type listener 
+		var deleteType = document.getElementsByClassName("deleteInterventionType")
+		for (var i = 0; i < deleteType.length; i++) {
+		    deleteType[i].addEventListener("click", function () {
+		        menu.menuArray[menu.activeMenu].removeInterventionType(this.id.substring(0, this.id.length - 23));
+		        menu.menuArray[menu.activeMenu].chosenInterventionType = null;
+		        fillMenu();
+		    });
+		}
+	    //set change intervention type listener
+		var changeType = document.getElementsByClassName("changeInterventionType")
+		for (var i = 0; i < changeType.length; i++) {
+		    changeType[i].addEventListener("click", function () {
+		        menu.menuArray[menu.activeMenu].chosenInterventionType = this.id.substring(0, this.id.length - 23);
+		        fillMenu();
+		    });
+		}
+	    //set change intervention type name listener
+		var changeTypeName = document.getElementsByClassName("inputType")
+		for (var i = 0; i < changeTypeName.length; i++) {
+		    changeTypeName[i].addEventListener("change", function () {
+		        menu.data.interventionTypes[this.id] = this.value;
+		        fillMenu();
+		    });
+		}
+		if (menu.data.interventionTypes.length > 0 && menu.menuArray[menu.activeMenu].chosenInterventionType != null) {
+		    //set add intervention instance listener
+		    document.getElementById("addInterventionInstance").addEventListener("click", function () {
+		        menu.menuArray[menu.activeMenu].addInterventionInstance("new Intervention Instance");
+		        fillMenu();
+		    });
+		    //set delete intervention instance listener 
+		    var deleteInstance = document.getElementsByClassName("deleteInterventionInstance")
+		    for (var i = 0; i < deleteInstance.length; i++) {
+		        deleteInstance[i].addEventListener("click", function () {
+		            menu.menuArray[menu.activeMenu].removeInterventionInstance(this.id.substring(0, this.id.length - 27));
+		            fillMenu();
+		        });
+		    }
+		    //set change intervention instance listener
+		    var changeType = document.getElementsByClassName("changeInterventionInstance")
+		    for (var i = 0; i < changeType.length; i++) {
+		        changeType[i].addEventListener("change", function () {
+		            menu.data.interventionInstances[menu.menuArray[menu.activeMenu].chosenInterventionType][this.id.substring(0, this.id.length - 27)] = this.value;
+		            fillMenu();
+		        });
+		    }
+		}
+	};
+	this.getInterventionTypeHTMLTable = function(){
+	    var html ="<table class='tableboarder'>"
+	    html += '<tr class="tableboarder"><th colspan="3" class="tableboarder">Intervention Types</th></tr>';
+		for (i = 0; i < menu.data.interventionTypes.length; i++) {
+		    html += '<tr class="tableboarder"><td class="changeInterventionType hover tableboarder" id="' + i + '-' + 'changeInterventionType"><div class="circle"></div></td><td class="tableboarder">' + '<input size="40" type="text" class="inputType" id="' + i + '" value="' + menu.data.interventionTypes[i] + '" >' + '</td><td class="deleteInterventionType hover tableboarder" id="' + i + '-' + 'deleteInterventionType"> - </th><br>';
+		}
+		html += '<tr class="tableboarder"><th class="hover tableboarder" id="addInterventionType" colspan="3">+</td></tr>';
+		return(html + "</table>")
+	};
+	this.getInterventionInstanceHTMLTable = function (position) {
+	    if (position == null)
+            return("");
+	    var html ="<table class='tableboarder'>"
+	    html += '<tr class="tableboarder"><th colspan="2" class="tableboarder">Intervention Instances</th></tr>';
+		for (i = 0; i < menu.data.interventionInstances[position].length; i++) {
+		    html += '<tr class="tableboarder"><td class="tableboarder"> <input size="100" class="changeInterventionInstance" id="' + i + '-' + 'changeInterventionInstance" value="' + menu.data.interventionInstances[position][i] + '"></td><td class="deleteInterventionInstance hover tableboarder" id="' + i + '-' + 'deleteInterventionInsatnce"> - </th><br>';
+		}
+		html += '<tr class="tableboarder"><th class="hover tableboarder" id="addInterventionInstance" colspan="2">+</td></tr>';
+		return(html + "</table>")
+	};
+	this.toXML = function(){
+		var xml='<cognitiveinterventiontypes>\n';
+		for (var i = 0; i < menu.data.interventionTypes.length; i++) {
+		    xml += '<cognitiveinterventiontype>\n';
+		    xml += '<typeid>' + menu.data.interventionTypes[i] + '</typeid>\n';
+		    xml += '<cognitiveinterventioninstances>\n';
+		    for (var j = 0; j < menu.data.interventionInstances[i].length; j++) {
+			    xml += '<cognitiveinterventioninstance>\n<instance>';
+			    xml += menu.data.interventionInstances[i][j];
+				xml += '</instance>\n</cognitiveinterventioninstance>\n';
+			};
+			xml += '</cognitiveinterventioninstances>\n';
+			xml += '</cognitiveinterventiontype>\n';
+		}
+		return (xml + '</cognitiveinterventiontypes>\n');
+	};
+}
+
+//menu object3
+function Menu3() {
+    this.selectedNode="";
+    this.dataDiv = 'm3data';
+    this.nodeColorDefault = '#0FF';
+    this.nodeColorSelected = 'HotPink';
+    this.paper;
+    this.nodeRadius = 15;
+    this.paperHeight;
+    this.paperWidth;
+	this.fillHTML = function(div){
+	    var html = "";
+	    html += '<table id="m3"><tr><th width="25%">Authoring Information</th><th>Graph</th></tr>';
+	    html += '<tr id="m3tr"><td>' + this.getDataHTML() + '</td><td id="graphCanvas" class="hover">' + this.getGraphHTML() + '</td></tr>';
+	        
+	    html += '</table>';
+	    document.getElementById(div).innerHTML = html;
+
+	    //set hight of canvas
+	    document.getElementById("m3tr").style.height = window.innerHeight * (9 / 12) + "px";
+	    //paint graph
+	    this.paintGraph();
+	    this.nodeClicked(menu.data.tree.startingNode.id);
+
+	    document.getElementById("addNodeButton").addEventListener("click", function () {
+	        var name = "new Node";
+	        var val = 1;
+	        while (menu.data.tree.getNodeById(name + val) != null) {
+	            val++;
+	        }
+	        menu.data.tree.addNode(name + val);
+	        menu.getActiveMenu().paintGraph();
+	        menu.data.tree.getNodeById(name + val).createHTML();
+	    });
+	};
+	this.getGraphHTML = function () {
+	    var html = '<div id="m3graph">';
+        return(html+"</div>");
+	};
+	this.paintGraphCanvas = function () {
+	    if (this.paper != null)
+	        this.paper.remove();
+	    var element = document.getElementById("graphCanvas");
+	    var rect = element.getBoundingClientRect();
+	    this.paperHeight = rect.bottom - rect.top + 10;
+	    this.paperWidth = rect.right - rect.left - 10;
+	    this.paper = Raphael(element, this.paperWidth, this.paperHeight);
+	    var paper = this.paper;
+	    //paper.canvas.style.backgroundColor = '#F00';
+	};
+	this.paintGraph = function () {
+	    this.paintGraphCanvas();
+	    menu.data.tree.soloNodes = 0;
+	    menu.data.tree.numberOfSoloNodes = 0;
+	    menu.data.tree.setGraphParameter();
+	    this.nodeRadius = this.paperHeight / ((menu.data.tree.maxDistanceToStartNode + 1) * 2 + 3) * 0.5;
+	    //print edges
+	    for (var i = 0; i < menu.data.tree.nodeList.length; i++) {
+	        var node = menu.data.tree.nodeList[i];
+	        for (var j = 0; j < node.edgeList.length; j++) {
+	            var edge = node.edgeList[j];
+	            if (edge.startsFrom.maxGraphStartDistance >= 0) {
+	                var e = this.paper.path("M" + edge.startsFrom.x * this.paperWidth + "," + edge.startsFrom.y * this.paperHeight + "L" + edge.leadsTo.x * this.paperWidth + "," + edge.leadsTo.y * this.paperHeight)
+	                edge.raphaelElement = e;
+	            }
+	        }
+	    }
+	    //print nodes
+	    for (var i = 0; i < menu.data.tree.nodeList.length; i++) {
+	        var node = menu.data.tree.nodeList[i];
+	        var el = this.paper.circle(node.x * this.paperWidth, node.y * this.paperHeight, this.nodeRadius)
+                        .attr({ fill: this.nodeColorDefault })
+                        .data("i", node.id)
+                        .click(function () {
+                            menu.getActiveMenu().nodeClicked(this.data("i"));
+                        });
+	        var txt = this.paper.text(node.x * this.paperWidth, node.y * this.paperHeight, node.id.substring(0,3))
+                        .data("i", node.id)
+                        .click(function () {
+                            menu.getActiveMenu().nodeClicked(this.data("i"));
+                        });
+	        node.raphaelElementText = txt;
+	        node.raphaelElement = el;
+
+	        if (node.interventionType != "-")
+	            node.colorNode(this.nodeColorSelected);
+	        else
+	            node.colorNode(this.nodeColorDefault);
+	    }
+	};
+	this.getDataHTML = function () {
+	    var html = '<div><input id="addNodeButton" type="button" class="hover" value="add node"></div>';
+	    html += '<div id="m3data"></div>';
+	    return (html);
+	};
+	this.toXML = function () {
+	    var xml = "";
+	    xml += '<cognitiveinterventionstartingnode>' + menu.data.tree.startingNode.id + '</cognitiveinterventionstartingnode>\n';
+	    xml += '<cognitiveinterventionnodes>\n';
+	    for (var i = 0; i < menu.data.tree.nodeList.length; i++) {
+	        xml += menu.data.tree.nodeList[i].toXML();
+	    }
+	    xml += '</cognitiveinterventionnodes>\n';
+	    return (xml);
+	};
+	this.nodeClicked = function (nodeId) {
+	    menu.data.tree.getNodeById(nodeId).textWeigthToBold();
+	    if (this.selectedNode != "")
+	        menu.data.tree.getNodeById(this.selectedNode).textWeightToNormal();
+	    this.selectedNode = nodeId;
+	    menu.data.tree.getNodeById(nodeId).createHTML();
+	};
+
+
+}
+
+function Menu4() {
+    this.noLines;
+    this.fillHTML = function (div) {
+        var html = "<h3>Resulting XML structure</h3>";
+        html += "<button class='hover' type='button' onclick='startDownload()'>Download XML file.</button></br>";
+        var xml = createXML();
+        var formattedXml = this.formatXML(xml).replace(/<br>/g, "\n");
+        html += "<textarea rows='" + (this.noLines + 10) + "' cols='120' readonly>" + formattedXml;// + "</texterea>";
+        document.getElementById(div).innerHTML = html;
+    };
+    this.formatXML = function (xml) {
+        //xml = xml.replace(/ /g, "");
+        xml = xml.replace(/\n/g, "");
+        var ret = "";
+        var newComp;
+        var oldComp;
+        var noSpacing = 0;
+        this.noLines = 0;
+        while (xml.length > 0) {
+            newComp = this.getNextXMLComponent(xml);
+            //alert("!"+newComp+"!");
+            xml = xml.substring(newComp.length, xml.length);
+            if (newComp.length >= 1 && newComp[1] == "/")
+                noSpacing -= 1;
+            for (var i = 0; i < noSpacing; i++) {
+                ret += "&nbsp &nbsp &nbsp &nbsp";
+            }
+            oldComp = newComp;
+            this.noLines++;
+            ret += newComp.replace(/</g, "&lt").replace(/>/g, "&gt") + "<br>";
+            if (oldComp.length >= 1 && oldComp[1] != "/" && oldComp[0] == "<")
+                noSpacing += 1;
+        }
+        return (ret);
+    };
+    this.getNextXMLComponent = function (xml) {
+        if (xml.length == 0)
+            return ("");
+        if (xml[0] != "<")
+            return (xml.substring(0, xml.indexOf("<")));
+        else
+            return (xml.substring(0, xml.indexOf(">") + 1));
+    };
+}
+
+function Menu5() {
+    this.modellingtype=1;
+    this.trigger = [];
+    this.interaction = [];
+    this.numberOfTraces = 4;
+    this.nodeRadius = 15;
+    this.nodeColorDefault = '#0FF';
+    this.nodeColorSelected = 'HotPink';
+    this.paper = null;
+    this.paperHeight;
+    this.paperWidth;
+    this.fillHTML = function (div) {
+        var html = "<div class='center'><select id='selectBehaviour'>";
+        html += "<option id='option-anticipatedBehaviour' value='1'>React on derivation from anticipated behaviour.</option>";
+        html += "<option id='option-misguidedBehaviour' value='0'>React on known misgueded behaviour.</option>";
+        html += "</select></div>";
+        html += "<p>number of traces: &nbsp &nbsp <input id='numberOfTracesText' type='text' value='" + (this.numberOfTraces-1) + "'></p>";
+        html+="<div id='m5inputfield'></div>";
+        document.getElementById(div).innerHTML = html;
+        this.createHTMLinputField('m5inputfield');
+
+        document.getElementById('numberOfTracesText').onchange = function () {
+            var isNumber = true;
+            for (var i = 0; i < this.value.length; i++)
+                if ("0123456789".indexOf(this.value[i]) == -1)
+                    isNumber = false;
+            if (!isNumber)
+                this.value = menu.getActiveMenu().numberOfTraces-1;
+            else {
+                menu.getActiveMenu().numberOfTraces = parseInt(this.value) + 1;
+                menu.getActiveMenu().paintGraph('m5graphDiv');
+                menu.getActiveMenu().paintInfo('m5infoDiv');
+            }
+        };
+
+        document.getElementById('selectBehaviour').onchange = function () {
+            menu.menuArray[5].modellingtype = document.getElementById('selectBehaviour').options[document.getElementById('selectBehaviour').selectedIndex].value;
+            menu.getActiveMenu().paintGraph('m5graphDiv');
+            menu.getActiveMenu().paintInfo('m5infoDiv');
+        };
+    };
+    this.createHTMLinputField = function (div) {
+        var html = "<table id='m5tablegraph'>";
+        //html += "<tr><th width='100px'>graphical representation</th><th>data</th></tr>";
+        html += "<tr height='10px'><td width='100px'><div height='10px' id='m5graphDiv' class='hover'></div></td><td><div id='m5infoDiv'></div></td></tr>";
+        html += "</table>";
+        document.getElementById(div).innerHTML = html;
+
+       
+
+        this.paintGraph('m5graphDiv');
+        this.paintInfo('m5infoDiv');
+    };
+    this.nodeClicked = function (id) {
+        alert(id);
+    };
+    this.paintGraph = function (div) {
+        if (this.paper != null)
+            this.paper.remove();
+
+        this.paintGraphCanvas(div);
+        //calculate y-data
+        var yPos = [];
+        var xPos = [];
+        for (var i = 0; i < this.numberOfTraces; i++) {
+            xPos.push(0.5);
+            yPos.push((i+1)/(this.numberOfTraces+2));
+        }
+        //print edges
+        var e = this.paper.path("M" + xPos[0] * this.paperWidth + "," + yPos[0] * this.paperHeight + "L" + xPos[this.numberOfTraces-1]* this.paperWidth + "," + yPos[this.numberOfTraces-1] * this.paperHeight)
+
+        //print nodes
+        var nodePrefix = this.findNodePrefix(this.numberOfTraces-1);
+        for (var i = 0; i < this.numberOfTraces; i++) {
+            if (i > 0) {
+                var el = this.paper.circle(xPos[i] * this.paperWidth, yPos[i] * this.paperHeight, this.nodeRadius)
+                            .attr({ fill: this.nodeColorDefault })
+                            .data("i", i)
+                            .click(function () {
+                                menu.getActiveMenu().nodeClicked(this.data("i"));
+                            });
+                var txt = this.paper.text(xPos[i] * this.paperWidth, yPos[i] * this.paperHeight, nodePrefix+i)
+                            .data("i", i)
+                            .click(function () {
+                                menu.getActiveMenu().nodeClicked(this.data("i"));
+                            });
+            } else {
+                var el = this.paper.circle(xPos[i] * this.paperWidth, yPos[i] * this.paperHeight, this.nodeRadius)
+                            .attr({ fill: this.nodeColorDefault })
+                            .data("i", -1)
+                            .click(function () {
+                                menu.getActiveMenu().nodeClicked("start");
+                            });
+                var txt = this.paper.text(xPos[i] * this.paperWidth, yPos[i] * this.paperHeight, "start")
+                            .data("i", -1)
+                            .click(function () {
+                                menu.getActiveMenu().nodeClicked("start");
+                            });
+            }
+        }
+    };
+    this.paintGraphCanvas = function (div) {
+
+        document.getElementById("m5graphDiv").style.height =  (this.numberOfTraces/3)* window.innerHeight * (9 / 12) + "px";
+
+        if (this.paper != null)
+            this.paper.remove();
+        var element = document.getElementById(div);
+        var rect = element.getBoundingClientRect();
+        this.paperHeight = rect.bottom - rect.top + 10;
+        this.paperWidth = rect.right - rect.left - 10;
+        this.paper = Raphael(element, this.paperWidth, this.paperHeight);
+        //var paper = this.paper;
+    };
+    this.paintInfo = function (div) {
+        var nodePrefix = this.findNodePrefix(this.numberOfTraces - 1);
+        var html = "";
+        html += "<table id='m5datainputtable'>";
+        for (var i = 0; i < this.numberOfTraces - 1; i++) {
+            html += "<tr class='m5datainputtable'><td class='m5datainputtable' colspan='2'>Edge</td><td class='m5datainputtable'>trigger</td>";
+            html += "<td class='m5datainputtable'>deactivation time[ms] (" + nodePrefix + (i + 1) + ")</td>";
+            if ((this.modellingtype == 0 && i == this.numberOfTraces - 2)||(this.modellingtype==1 && i != this.numberOfTraces-2))
+                html += "<td class='m5datainputtable'>intervention (" + nodePrefix + (i + 1) + ") </td>";
+            html += "</tr><tr class='m5datainputtable'><td class='m5datainputtable'>from:</td><td class='m5datainputtable'> ";
+            if(i!=0)
+                html += nodePrefix+i;
+            else
+                html += "start";
+            html += "</td><td class='m5datainputtable' rowspan='2'>";
+            html += "<input type='text' class='m5trigger' id='m5trigger-"+i+"'>";
+            html += "</td>";
+            html += "<td class='m5datainputtable' rowspan='2'>";
+            html += "<input type='text' class='m5deactivationtime' id='m5deactivationtime-" + i + "' value='"+menu.data.defaultDeactivationTime+"'>";
+            html += "</td>";
+            if ((this.modellingtype == 0 && i == this.numberOfTraces - 2) || (this.modellingtype == 1 && i != this.numberOfTraces - 2)) {
+                html += "<td class='m5datainputtable' rowspan='2'>";
+                html += "<select class='m5selectintervention' id='m5selectintervention-" + i + "'>";
+                html += "<option value='-'>-</option>";
+                for (var j = 0; j < menu.data.interventionTypes.length; j++) {
+                    html += "<option value='" + menu.data.interventionTypes[j] + "'>" + menu.data.interventionTypes[j] + "</option>";
+                }
+                html += "</select></td>";
+            }
+            html += "</tr>";
+            html += "<tr class='m5datainputtable'><td class='m5datainputtable'>to:</td><td class='m5datainputtable'>" + nodePrefix + (i + 1) + "</td></tr>";
+            html += "<tr><td colspan='4'>&nbsp</td><tr>";
+        }
+        html += "</table>";
+        html += "<input class='hover' type='button' value='transfer changes' id='transferchanges'>";
+        document.getElementById(div).innerHTML = html;
+
+        document.getElementById('transferchanges').onclick = function () {
+            var elements = document.getElementsByClassName('m5trigger');
+            var triggers = [];
+            var interventions = [];
+            var deactivationtime = [];
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].value == "") {
+                    alert("Please assign a trigger-value to all edges!");
+                    return;
+                }
+                triggers.push(elements[i].value);
+            }
+            var numberOfInterventions = 0;
+            elements = document.getElementsByClassName('m5deactivationtime');
+            for (var i = 0; i < elements.length; i++) {
+                deactivationtime.push(elements[i].value);
+            }
+            elements = document.getElementsByClassName('m5selectintervention');
+            for (var i = 0; i < elements.length; i++) {
+                if ("" != document.getElementById(elements[i].id).options[document.getElementById(elements[i].id).selectedIndex].value)
+                    numberOfInterventions++;
+                interventions.push(document.getElementById(elements[i].id).options[document.getElementById(elements[i].id).selectedIndex].value);
+            }
+            if (numberOfInterventions == 0) {
+                alert("No intervention selected! Assigne at least to one of the nodes an intervention.");
+                return;
+            }
+            //alert("überspielen...");
+            var nodePrefix = menu.menuArray[5].findNodePrefix(menu.menuArray[5].numberOfTraces - 1);
+            for (var i = 1; i < menu.menuArray[5].numberOfTraces; i++) {
+                menu.data.tree.addNode(nodePrefix + i);
+                menu.data.tree.getNodeById(nodePrefix + i).deactivationTimeMS = deactivationtime[i - 1];
+                if (i == 1)
+                    menu.data.tree.addEdge(menu.data.tree.startingNode.id, nodePrefix + i)
+                else
+                    menu.data.tree.addEdge(nodePrefix + (i - 1), nodePrefix + i);
+
+                if (menu.menuArray[5].modellingtype == 0) {
+                    if (i != menu.menuArray[5].numberOfTraces - 1) {
+                        menu.data.tree.getNodeById(nodePrefix + i).interventionType = "-";
+                    } else {
+                        menu.data.tree.getNodeById(nodePrefix + i).interventionType = interventions[0];
+                    }
+                } else {
+                    if (i == menu.menuArray[5].numberOfTraces - 1) {
+                        menu.data.tree.getNodeById(nodePrefix + i).interventionType = "-";
+                    } else {
+                        menu.data.tree.getNodeById(nodePrefix + i).interventionType = interventions[i - 1];
+                    }
+                }
+
+                
+                
+                if (i == 1)
+                    menu.data.tree.getEdgeByStartAndEndNodeId(menu.data.tree.startingNode.id, nodePrefix + i).trigger = triggers[i - 1];
+                else
+                    menu.data.tree.getEdgeByStartAndEndNodeId(nodePrefix + (i - 1), nodePrefix + i).trigger = triggers[i - 1];
+
+                menu.getActiveMenu().paintGraph('m5graphDiv');
+                menu.getActiveMenu().paintInfo('m5infoDiv');
+            }
+        };
+        /*
+        for (var i = 0; i < this.numberOfTraces - 1; i++) {
+            document.getElementById("m5trigger-" + i).onchange = function () {
+                var edgeNr = this.id.substring(10, this.id.length);
+                alert(edgeNr);
+            };
+            document.getElementById("m5selectintervention-" + i).onchange = function () {
+                var edgeNr = this.id.substring(21,this.id.length);
+                var selectedValue = document.getElementById(this.id).options[document.getElementById(this.id).selectedIndex].value
+                alert(selectedValue);
+            };
+        }
+        */
+    };
+    this.findNodePrefix = function (numberOfNodes) {
+        var letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var pos = -1;
+        var idIsTaken = true;
+        while (idIsTaken) {
+            pos++;
+            idIsTaken = false;
+            for (var i = 1; i <= numberOfNodes; i++) {
+                if (menu.data.isNodeIdTaken(letter[pos] + i)) {
+                    idIsTaken = true;
+                    break;
+                }
+            }
+        }
+        return(letter[pos]);
+    };
+}
+
+//object holding all data
+function Data() {
+    this.tree = new Tree();
+    this.defaultDeactivationTime = 1000;
+    this.interventionTypes = ["test a", "test b"];
+    this.interventionInstances = [["a", "aa", "aaa"], ["b", "bb", "bbb"]];
+    this.isNodeIdTaken = function(nodeId){
+        for (var i = 0; i < this.tree.nodeList.length; i++) 
+            if (this.tree.nodeList[i].id == nodeId) 
+                return (true);
+        return(false);
+    };
+
+};
+
+//structure for handling cogintive interventions
+function Tree() {
+    this.startingNode = new Node("Start Node");
+    this.maxDistanceToStartNode = 0;
+    this.soloNodes = 0;
+    this.numberOfSoloNodes = 0;
+    this.elementPerLevel = [];
+    this.elementPerLevelTaken = [];
+    this.nodeList = [this.startingNode];
+    this.getNodeById = function (id) {
+        sol = -1;
+        for (var i = 0; i < this.nodeList.length; i++) {
+            if (this.nodeList[i].id == id) {
+                sol = i;
+            }
+        }
+        return (this.nodeList[sol]);
+    };
+    this.addNode = function (nodeId) {
+        var node = new Node(nodeId);
+        node.deactivationTimeMS = menu.data.defaultDeactivationTime;
+        this.nodeList.push(node);
+    };
+    this.deleteNode = function (id) {
+        if (id == this.startingNode.id) {
+            return;
+        }
+        var sol = -1;
+        for (var i = 0; i < this.nodeList.length; i++) {
+            if (this.nodeList[i].id == id) {
+                sol = i;
+            }
+        }
+        if (i > -1) {
+            this.nodeList.splice(sol, 1);
+        }
+    }
+    this.addEdge = function (startId, endId) {
+        var startNode = this.getNodeById(startId);
+        var endNode = this.getNodeById(endId);
+        startNode.addEdge(endNode);
+    };
+    this.setGraphParameter = function () {
+        //set position for nodes in graph on [0,1]^2
+        //reset all positions to -1,-1 / graphHight = -1
+        for (var i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].graphHight = -1;
+            this.nodeList[i].x = -1;
+            this.nodeList[i].y = -1;
+        }
+        this.startingNode.setMaxGraphStartDistance(0);
+        for (var i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].setYpos();
+        }
+        this.elementPerLevel = [];
+        this.elementPerLevelTaken = [];
+        for (var i = 0; i <= this.maxDistanceToStartNode; i++) {
+            this.elementPerLevel.push(0);
+            this.elementPerLevelTaken.push(0);
+        }
+        for (var i = 0; i < this.nodeList.length; i++) {
+            var len = this.nodeList[i].maxGraphStartDistance;
+            if (len >= 0)
+                this.elementPerLevel[len] = this.elementPerLevel[len] + 1;
+            else
+                this.numberOfSoloNodes = this.numberOfSoloNodes + 1;
+        }
+        for (var i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].setXpos();
+        }
+    };
+    this.deleteNodeById = function (id) {
+
+        var pos = 0;
+        while (this.nodeList[pos].id != id)
+            pos++;
+        this.nodeList.splice(pos, 1);
+        //delete edges
+        for (var i = 0; i < this.nodeList.length; i++) {
+            var node = this.nodeList[i];
+            var edgeIndexToDelete = [];
+            for (var j = 0; j < node.edgeList.length; j++) {
+                var edge = node.edgeList[j];
+                if (edge.leadsTo.id == id) {
+                    edgeIndexToDelete.push(j);
+                }
+            }
+            while (edgeIndexToDelete.length > 0) {
+                node.edgeList.splice(edgeIndexToDelete[edgeIndexToDelete.length - 1], 1);
+                edgeIndexToDelete.pop();
+            }
+        }
+    };
+    this.getPossibleSucessorIds = function (startNode) {
+        var list = [];
+        if (startNode.maxGraphStartDistance == -1)
+            return (list);
+        for (var i = 0; i < this.nodeList.length; i++) {
+            var node = this.nodeList[i];
+            if (node.id != this.startingNode.id && !this.existsWayFromTo(node, startNode) && !this.existsWayFromTo(startNode,node)) {
+                list.push(node.id);
+            }
+        }
+        return (list);
+    };
+    this.existsWayFromTo = function (from, to) {
+        if (from.id == to.id)
+            return (true);
+        for (var i = 0; i < from.edgeList.length; i++) {
+            var node = from.edgeList[i].leadsTo;
+            if (this.existsWayFromTo(node, to))
+                return (true);
+        }
+        return (false);
+    };
+    this.colorNodeById = function (id) {
+        this.getNodeById(id).colorNode();
+    };
+    this.getEdgeByStartAndEndNodeId = function (startnodeid, endnodeid) {
+        return(this.getNodeById(startnodeid).getEdgeByEndNodeId(endnodeid));
+    };
+};
+//node of the cognitive intervention tree 
+function Node(id) {
+    this.raphaelElement;
+    this.raphaelElementText;
+    this.id = id;
+    this.edgeList = [];
+    this.x;
+    this.y;
+    //number of max prerequisite depht 
+    this.maxGraphStartDistance = -1;
+    this.deactivationTimeMS;
+    this.interventionType = "-";
+    this.addEdge = function (nodeIdLeadingTo) {
+        this.edgeList.push(new Edge(this, nodeIdLeadingTo));
+    };
+    this.deleteEdge = function (edge) {
+        var sol = -1;
+        for (var i = 0; i < this.edgeList.lenth; i++) {
+            if (this.edgeList[i].startsFrom == edge.startsFrom && this.edgeList[i].leadsTo == edge.leadsTo) {
+                sol = i;
+            }
+        }
+        if (i > -1) {
+            this.edgeList.splice(sol, 1);
+        }
+    };
+    this.setMaxGraphStartDistance = function (distance) {
+        this.maxGraphStartDistance = distance;
+        if (menu.data.tree.maxDistanceToStartNode < distance)
+            menu.data.tree.maxDistanceToStartNode = distance;
+        for (var i = 0; i < this.edgeList.length; i++) {
+            if (this.edgeList[i].leadsTo.maxGraphStartDistance < (distance + 1)) {
+                this.edgeList[i].leadsTo.setMaxGraphStartDistance(distance + 1);
+            }
+        }
+    };
+    this.setXpos = function () {
+        if (this.maxGraphStartDistance >= 0) {
+            menu.data.tree.elementPerLevelTaken[this.maxGraphStartDistance] = menu.data.tree.elementPerLevelTaken[this.maxGraphStartDistance] + 1;
+            this.x = menu.data.tree.elementPerLevelTaken[this.maxGraphStartDistance] / (1 + menu.data.tree.elementPerLevel[this.maxGraphStartDistance]);
+        } else {
+            menu.data.tree.soloNodes = menu.data.tree.soloNodes + 1;
+            this.x = menu.data.tree.soloNodes / (menu.data.tree.numberOfSoloNodes + 1)
+        }
+    };
+    this.setYpos = function () {
+        if (this.maxGraphStartDistance >= 0)
+            this.y = (this.maxGraphStartDistance + 1) / (menu.data.tree.maxDistanceToStartNode + 2);
+        else
+            this.y = 1 - 1 / (5 * menu.data.tree.maxDistanceToStartNode);
+
+    };
+    this.createHTML = function () {
+        var html = '<div id="nodeInformationDiv"><p>Node Id:</p> <input id="nodeIdChanged-' + this.id + '" type="text" value="' + this.id + '">';
+        var interventionTypes = menu.data.interventionTypes;
+        if (this.id != menu.data.tree.startingNode.id) {
+            html += '<input type="button" class="hover" value="delete" id="delete-' + this.id + '">';
+            html += '<p>Deactivation after [ms]:</p><input id="deactivationTime-' + this.id + '" type="text" value="' + this.deactivationTimeMS + '">';
+            html += '<p>Triggered intervention-type:</p>';
+            html += '<select id="selectType-' + this.id + '">';
+            for (var i = 0; i < interventionTypes.length; i++) {
+                html += '<option value="' + interventionTypes[i] + '">' + interventionTypes[i] + '</option>';
+            }
+            html += '<option value="-">-</option>';
+            html += '</select> ';
+        }
+        html += '<p>Edges:</p><table><tr><th>to</th><th>trigger</th></tr>';
+        for (var i = 0; i < this.edgeList.length; i++) {
+            html += '<tr><td>' + this.edgeList[i].leadsTo.id + '</td><td><input id="edgeTrigger-' + this.id + '-' + i + '" type="text" value="' + this.edgeList[i].trigger + '"></td></tr>';
+        }
+        html += '<tr><td><select id="selectNode-' + this.id + '">';
+        var possibleSuccessors = menu.data.tree.getPossibleSucessorIds(this);
+        html += '<option value="new">new</option>';
+        for (var i = 0; i < possibleSuccessors.length; i++) {
+            html += '<option value="' + possibleSuccessors[i] + '">' + possibleSuccessors[i] + '</option>';
+        }
+        html += '</select></td><td></td></tr>';
+        html += '</table></div>';
+        document.getElementById(menu.getActiveMenu().dataDiv).innerHTML = html;
+
+        if (this.id != menu.data.tree.startingNode.id) {
+            document.getElementById('delete-' + this.id).addEventListener("click", function () {
+                var id = this.id.substring(7, this.id.length);
+                menu.data.tree.deleteNodeById(id);
+                menu.getActiveMenu().paintGraph();
+            });
+        }
+
+        if (this.id != menu.data.tree.startingNode.id)
+            document.getElementById('selectType-' + this.id).value = this.interventionType;
+
+        document.getElementById('selectNode-' + this.id).addEventListener("change", function () {
+            var nodeId = this.id.substring(11, this.id.length);
+            newEdge = new Edge(menu.data.tree.getNodeById(nodeId), menu.data.tree.getNodeById(this.value));
+            menu.data.tree.getNodeById(nodeId).edgeList.push(newEdge);
+            menu.getActiveMenu().paintGraph();
+            menu.data.tree.getNodeById(nodeId).createHTML();
+        });
+
+        if (this.id != menu.data.tree.startingNode.id) {
+            document.getElementById('selectType-' + this.id).addEventListener("change", function () {
+                var nodeId = this.id.substring(11, this.id.length);
+                menu.data.tree.getNodeById(nodeId).interventionType = this.value;
+                menu.data.tree.colorNodeById(nodeId);
+            });
+            document.getElementById('deactivationTime-' + this.id).addEventListener('change', function () {
+                var val = parseInt(this.value);
+                if (val != null && val == this.value) {
+                    var oldId = this.id.substring(17, this.id.length);
+                    menu.data.tree.getNodeById(oldId).deactivationTimeMS = this.value;
+                }
+            });
+        }
+
+        document.getElementById('nodeIdChanged-' + this.id).addEventListener('change', function () {
+            var oldId = this.id.substring(14, this.id.length);
+            if (menu.data.tree.getNodeById(this.value) == null) {
+                menu.data.tree.getNodeById(oldId).id = this.value;
+                menu.getActiveMenu().paintGraph();
+                menu.data.tree.getNodeById(this.value).createHTML();
+                menu.menuArray[3].selectedNode = this.value;
+            } else
+                this.value = "Enter a unique ID.";
+        });
+
+
+        for (var i = 0; i < this.edgeList.length; i++) {
+            document.getElementById('edgeTrigger-' + this.id + '-' + i).addEventListener('change', function () {
+                var identity = this.id.substring(12, this.id.length);
+                var index = identity.lastIndexOf('-')
+                var nodeId = identity.substring(0, index);
+                var edgePos = identity.substring(index + 1, identity.length);
+                menu.data.tree.getNodeById(nodeId).edgeList[edgePos].trigger = this.value;
+            });
+        }
+    };
+    this.toXML = function () {
+        var xml = '<cognitiveinterventionnode>\n';
+        xml += '<nodeid>' + this.id + '</nodeid>\n';
+        if(this.id != menu.data.tree.startingNode.id)
+            xml += '<activationDuration>' + this.deactivationTimeMS + '</activationDuration>\n';
+        else
+            xml += '<activationDuration>0</activationDuration>\n';
+        if (this.interventionType == "-")
+            xml += '<interventiontype></interventiontype>\n';
+        else
+            xml += '<interventiontype>' + this.interventionType + '</interventiontype>\n';
+        xml += '<cognitiveinterventionedgelist>\n';
+        for (var i = 0; i < this.edgeList.length; i++) {
+            xml += this.edgeList[i].toXML();
+        }
+        xml += '</cognitiveinterventionedgelist>\n';
+        xml += '</cognitiveinterventionnode>\n';
+        return (xml);
+    };
+    this.colorNode = function () {
+        if(this.interventionType == '-')
+            this.raphaelElement.attr({ fill: menu.getActiveMenu().nodeColorDefault });
+        else
+            this.raphaelElement.attr({ fill: menu.getActiveMenu().nodeColorSelected });
+    };
+    this.textWeigthToBold = function () {
+        this.raphaelElementText.attr({ "font-size": "16px", "font-weight": "bold" });
+    };
+    this.textWeightToNormal = function () {
+        this.raphaelElementText.attr({ "font-size": "10px", "font-weight": "500" });
+    };
+    this.getEdgeByEndNodeId = function (endnodeid) {
+        for (var i = 0; i < this.edgeList.length; i++) {
+            if(this.edgeList[i].leadsTo.id==endnodeid)
+                return(this.edgeList[i]);
+        }
+        return(null);
+    };
+};
+//edge of the cognitive intervention tree
+function Edge(nodeStart, nodeEnd) {
+    this.raphaelElement;
+    this.trigger = "";
+    this.startsFrom = nodeStart;
+    this.leadsTo = nodeEnd;
+    this.type = "exclusive";
+    this.toXML = function () {
+        var xml = '';
+        xml += '<cognitiveinterventionedge>\n';
+        xml += '<successorid>' + this.leadsTo.id + '</successorid>\n';
+        xml += '<trackingid>' + this.trigger + '</trackingid>\n';
+        xml += '<type>' + this.type + '</type>\n';
+        xml += '</cognitiveinterventionedge>\n';
+        return (xml);
+    };
+};
+
+</script>
+
+</head>
+<body>
+<div id='body'>
+<h1>Cognitive Intervention XML creator</h1>
+
+<p id="demo">Enter the requested information in all menus and press the download-button to get the XML file.</p>
+
+
+<div id='m1' class='menu hover'>overview</div>
+<div id='m2' class='menu hover'>interventions</div>
+<div id='m3' class='menu hover'>tracking structure</div>
+<div id='m5' class='menu hover'>add tracking series</div>
+<div id='m4' class='menu hover'>download XML</div>
+<div id='dataInputField'>
+Chose a menu and start filling in the asset specifications.
+</div>
+
+</div>
+<script>
+	performStartupAction();
+</script>
+</body>
+</html>

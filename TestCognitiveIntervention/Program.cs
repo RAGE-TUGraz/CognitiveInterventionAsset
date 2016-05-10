@@ -15,18 +15,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   
-  Development done by Cognitive Science Section (CSS) 
-  at Knowlge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
+  This software has been created in the context of the EU-funded RAGE project.
+  Realising and Applied Gaming Eco-System (RAGE), Grant agreement No 644187, 
+  http://rageproject.eu/
+
+  Development was done by Cognitive Science Section (CSS) 
+  at Knowledge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
   http://kti.tugraz.at/css/
 
   Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
   Changed by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
-  Changed on: 2016-02-10
 */
 
+using AssetManagerPackage;
+using AssetPackage;
 using CognitiveInterventionAssetNameSpace;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -36,10 +42,83 @@ namespace TestCognitiveIntervention
     {
         static void Main(string[] args)
         {
+            AssetManager.Instance.Bridge = new Bridge();
+
             CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
+
+            //setting feedback method
+            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => Console.WriteLine("DelegateLogging: " + interventionType + ", "+ interventionInstance);
+            cia.setInterventionDelegate(cognitiveInterventionDelegate);
+
+            cia.performAllTests();
+            cia.sendTrace("goTo1");
+            cia.sendTrace("goTo2");
+            cia.sendTrace("goTo6");
+            cia.sendTrace("goTo7");
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
+    }
+
+
+    class Bridge : IBridge, ILog, IDataStorage
+    {
+        #region IDataStorage
+        public bool Delete(string fileId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Exists(string fileId)
+        {
+            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+            return (File.Exists(filePath));
+        }
+
+        public string[] Files()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Load(string fileId)
+        {
+            string path = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    String line = sr.ReadToEnd();
+                    return (line);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Bridge: Error when reading file!");
+            }
+
+            return (null);
+        }
+
+        public void Save(string fileId, string fileData)
+        {
+            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+            using (StreamWriter file = new StreamWriter(filePath))
+            {
+                file.Write(fileData);
+            }
+        }
+
+        #endregion IDataStorage
+        #region ILog
+
+        public void Log(Severity severity, string msg)
+        {
+            Console.WriteLine("Bridge: " + msg);
+        }
+
+        #endregion ILog
     }
 }

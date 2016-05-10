@@ -7,3 +7,4 @@ C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\T
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\obj\Debug\TestCognitiveIntervention.csprojResolveAssemblyReference.cache
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\obj\Debug\TestCognitiveIntervention.exe
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\obj\Debug\TestCognitiveIntervention.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\bin\Debug\RageAssetManager.xml

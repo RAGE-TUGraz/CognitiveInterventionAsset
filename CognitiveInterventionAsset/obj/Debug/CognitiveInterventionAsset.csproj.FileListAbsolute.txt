@@ -4,3 +4,5 @@ C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\C
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\bin\Debug\RageAssetManager.pdb
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\obj\Debug\CognitiveInterventionAsset.dll
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\obj\Debug\CognitiveInterventionAsset.pdb
+C:\Users\mmaurer\documents\visual studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\obj\Debug\CognitiveInterventionAsset.csprojResolveAssemblyReference.cache
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\bin\Debug\RageAssetManager.xml
