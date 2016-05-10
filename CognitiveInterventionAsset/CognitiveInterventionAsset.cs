@@ -25,7 +25,6 @@
 
   Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
   Changed by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
-  Changed on: 2016-02-22
 */
 namespace CognitiveInterventionAssetNameSpace
 {
@@ -131,6 +130,9 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.addNewTrack(trace);
         }
 
+        #endregion Methods
+
+        #region InternalMethods
         /// <summary>
         /// Method for reading the Asset settings.
         /// </summary>
@@ -139,8 +141,8 @@ namespace CognitiveInterventionAssetNameSpace
         {
             return (this.settings);
         }
+        #endregion InternalMethods
 
-        #endregion Methods
     }
 
 }
