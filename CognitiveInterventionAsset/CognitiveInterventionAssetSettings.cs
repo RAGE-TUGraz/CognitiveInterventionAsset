@@ -52,6 +52,7 @@ namespace CognitiveInterventionAssetNameSpace
         {
             // Set Default values here.
             XMLFileLocation = "cognitiveInterventionXML.xml";
+            TimeToDeactivationOfNodesInMiliSec = 1000;
         }
 
         #endregion Constructors
@@ -67,6 +68,13 @@ namespace CognitiveInterventionAssetNameSpace
         /// </value>
         [XmlElement()]
         public String XMLFileLocation
+        {
+            get;
+            set;
+        }
+
+        [XmlElement()]
+        public int TimeToDeactivationOfNodesInMiliSec
         {
             get;
             set;

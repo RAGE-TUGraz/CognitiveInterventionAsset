@@ -95,6 +95,7 @@ namespace CognitiveInterventionAssetNameSpace
             set
             {
                 settings = (value as CognitiveInterventionAssetSettings);
+                CognitiveInterventionHandler.Instance.loadCognitiveInterventionTree();
             }
         }
 
@@ -102,14 +103,6 @@ namespace CognitiveInterventionAssetNameSpace
         #region Methods
 
         // Your code goes here.
-
-        /// <summary>
-        /// Performing all test of the cognitive intervention asset.
-        /// </summary>
-        public void performAllTests()
-        {
-            CognitiveInterventionHandler.Instance.performAllTests();
-        }
 
         /// <summary>
         /// Methode for setting the Method for handling cognitive interventions

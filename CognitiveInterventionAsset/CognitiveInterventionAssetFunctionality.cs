@@ -46,12 +46,7 @@ namespace CognitiveInterventionAssetNameSpace
     internal class CognitiveInterventionHandler
     {
         #region AlgorithmParameter
-
-        /// <summary>
-        /// Describes how long a node is active before deactivating again.
-        /// </summary>
-        internal int timeToDeactivationOfNodesInMiliSec = 1000;
-
+        
         #endregion AlgorithmParameter
         #region Fields
 
@@ -211,6 +206,7 @@ namespace CognitiveInterventionAssetNameSpace
                 getCIA().Log(severity, "[CIA]: " + msg);
         }
 
+        /*
         /// <summary>
         /// Creates an example XMLCognitiveInterventionData structure.
         /// </summary>
@@ -457,6 +453,7 @@ namespace CognitiveInterventionAssetNameSpace
 
             this.cognitiveInterventionTree = oldTree;
         }
+        */
 
         #endregion Testmethods
     }
@@ -470,7 +467,7 @@ namespace CognitiveInterventionAssetNameSpace
     /// <summary>
     /// Class managing the intervention activation.
     /// </summary>
-    internal class CognitiveInterventionTree
+    public class CognitiveInterventionTree
     {
         #region Fields
 
@@ -502,7 +499,7 @@ namespace CognitiveInterventionAssetNameSpace
         #endregion Fields
         #region Constructors
 
-        internal CognitiveInterventionTree(XMLCognitiveInterventionData data)
+        public CognitiveInterventionTree(XMLCognitiveInterventionData data)
         {
             //fill interventions
             List<string> instances;
@@ -519,6 +516,7 @@ namespace CognitiveInterventionAssetNameSpace
             {
                 CognitiveInterventionNode newNode = new CognitiveInterventionNode(xmlNode.nodeId);
                 newNode.interventionType = xmlNode.interventionType;
+                newNode.timeToDeactivationInMiliSec = xmlNode.activationDuration;
                 this.nodes.Add(newNode);
             }
             //create and add all edges
@@ -707,13 +705,63 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate(interventionType, chosenInstance);
         }
 
+        /* NOT TESTED!
+        /// <summary>
+        /// Method for creating a xml out of the structure
+        /// </summary>
+        /// <returns></returns>
+        public string toXML()
+        {
+            string xml = "<cognitiveinterventiondata>";
+            xml += "<cognitiveinterventiontypes>";
+            foreach(string interventiontype in this.interventions.Keys)
+            {
+                xml += "<cognitiveinterventiontype>";
+                xml += "<typeid>"+ interventiontype +"</typeid>";
+                xml += "<cognitiveinterventioninstances>";
+                foreach(string interventioninstance in this.interventions[interventiontype])
+                {
+                    xml += "<cognitiveinterventioninstance>";
+                    xml += "<instance>"+ interventioninstance +"</instance>";
+                    xml += "</cognitiveinterventioninstance>";
+                }
+                xml += "</cognitiveinterventioninstances>";
+                xml += "</cognitiveinterventiontype>";
+            }
+            xml += "</cognitiveinterventiontypes>";
+            xml += "<cognitiveinterventionstartingnode>" + this.startingNode.id +"</cognitiveinterventionstartingnode>";
+            xml += "<cognitiveinterventionnodes>";
+            foreach(CognitiveInterventionNode node in this.nodes)
+            {
+                xml += "<cognitiveinterventionnode>";
+                xml += "<nodeid>"+ node.id +"</nodeid>";
+                xml += "<activationDuration>"+ node.timeToDeactivationInMiliSec +"</activationDuration>";
+                xml += "<interventiontype>"+node.interventionType+"</interventiontype>";
+                xml += "<cognitiveinterventionedgelist>";
+                foreach(KeyValuePair<string,CognitiveInterventionEdge> pair in node.edges)
+                {
+                    xml += "<cognitiveinterventionedge>";
+                    xml += "<successorid>"+pair.Value.successor.id+"</successorid>";
+                    xml += "<trackingid>"+pair.Key+"</trackingid>";
+                    xml += "<type>exclusive</type>";
+                    xml += "</cognitiveinterventionedge>";
+                }
+                xml += "</cognitiveinterventionedgelist>";
+                xml += "</cognitiveinterventionnode>";
+            }
+            xml += "</cognitiveinterventionnodes>";
+
+            return xml+ "</cognitiveinterventiondata>";
+        }
+        */
+
         #endregion Methods
     }
 
     /// <summary>
     /// Class representing a node in the cognitive intervention tree
     /// </summary>
-    internal class CognitiveInterventionNode
+    public class CognitiveInterventionNode
     {
         #region Fields
 
@@ -742,7 +790,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <summary>
         /// Describes how long a node is active before deactivating again.
         /// </summary>
-        internal double timeToDeactivationInMiliSec = (double) CognitiveInterventionHandler.Instance.timeToDeactivationOfNodesInMiliSec;
+        internal int timeToDeactivationInMiliSec;
 
         #endregion Fields
         #region Constructors
@@ -800,7 +848,7 @@ namespace CognitiveInterventionAssetNameSpace
     /// <summary>
     /// Class representing a edge in the cognitive intervention tree.
     /// </summary>
-    internal class CognitiveInterventionEdge
+    public class CognitiveInterventionEdge
     {
         #region Fields
 
@@ -1018,9 +1066,9 @@ namespace CognitiveInterventionAssetNameSpace
         #endregion Fields
         #region Constructore
 
-        internal XMLCognitiveInterventionNode() { }
+        public XMLCognitiveInterventionNode() { }
 
-        internal XMLCognitiveInterventionNode(string id)
+        public XMLCognitiveInterventionNode(string id)
         {
             this.nodeId = id;
         }
@@ -1069,9 +1117,9 @@ namespace CognitiveInterventionAssetNameSpace
         #endregion Fields
         #region Constructor 
 
-        internal XMLCognitiveInterventionEdge() { }
+        public XMLCognitiveInterventionEdge() { }
 
-        internal XMLCognitiveInterventionEdge(string trackingId, string type, string successorId)
+        public XMLCognitiveInterventionEdge(string trackingId, string type, string successorId)
         {
             this.trackingId = trackingId;
             this.type = type;
