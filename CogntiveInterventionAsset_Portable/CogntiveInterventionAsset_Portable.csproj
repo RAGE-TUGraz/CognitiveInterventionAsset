@@ -35,21 +35,21 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\CognitiveInterventionAsset.cs">
+    <Compile Include="..\CognitiveInterventionAsset\CognitiveInterventionAsset.cs">
       <Link>CognitiveInterventionAsset.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\CognitiveInterventionAssetSettings.cs">
+    <Compile Include="..\CognitiveInterventionAsset\CognitiveInterventionAssetSettings.cs">
       <Link>CognitiveInterventionAssetSettings.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\Properties\AssemblyInfo.cs">
+    <Compile Include="..\CognitiveInterventionAsset\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\CognitiveInterventionAssetFunctionality.cs">
+    <Compile Include="..\CognitiveInterventionAsset\CognitiveInterventionAssetFunctionality.cs">
       <Link>CognitiveInterventionAssetFunctionality.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\..\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CognitiveInterventionAsset\Resources\CognitiveInterventionAsset.VersionAndDependencies.xml">
+    <Content Include="..\CognitiveInterventionAsset\Resources\CognitiveInterventionAsset.VersionAndDependencies.xml">
       <Link>Resources\CognitiveInterventionAsset.VersionAndDependencies.xml</Link>
     </Content>
   </ItemGroup>
