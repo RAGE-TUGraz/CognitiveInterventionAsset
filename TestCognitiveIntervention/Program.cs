@@ -360,7 +360,10 @@ namespace TestCognitiveIntervention
 
     class Bridge : IBridge, ILog, IDataStorage
     {
+        string IDataStoragePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\";
+
         #region IDataStorage
+
         public bool Delete(string fileId)
         {
             throw new NotImplementedException();
@@ -368,7 +371,8 @@ namespace TestCognitiveIntervention
 
         public bool Exists(string fileId)
         {
-            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+#warning Change DataStorage-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+            string filePath = IDataStoragePath + fileId;
             return (File.Exists(filePath));
         }
 
@@ -379,11 +383,11 @@ namespace TestCognitiveIntervention
 
         public string Load(string fileId)
         {
-            string path = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
-
+#warning Change Loading-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+            string filePath = IDataStoragePath + fileId;
             try
             {   // Open the text file using a stream reader.
-                using (StreamReader sr = new StreamReader(path))
+                using (StreamReader sr = new StreamReader(filePath))
                 {
                     // Read the stream to a string, and write the string to the console.
                     String line = sr.ReadToEnd();
@@ -392,7 +396,7 @@ namespace TestCognitiveIntervention
             }
             catch (Exception e)
             {
-                Console.WriteLine("Bridge: Error when reading file!");
+                Console.WriteLine("Error by loading the DM! - Maybe you need to change the path: \"" + IDataStoragePath + "\"");
             }
 
             return (null);
@@ -400,7 +404,8 @@ namespace TestCognitiveIntervention
 
         public void Save(string fileId, string fileData)
         {
-            string filePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\" + fileId;
+#warning Change Saving-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+            string filePath = IDataStoragePath + fileId;
             using (StreamWriter file = new StreamWriter(filePath))
             {
                 file.Write(fileData);
@@ -408,6 +413,7 @@ namespace TestCognitiveIntervention
         }
 
         #endregion IDataStorage
+
         #region ILog
 
         public void Log(Severity severity, string msg)
