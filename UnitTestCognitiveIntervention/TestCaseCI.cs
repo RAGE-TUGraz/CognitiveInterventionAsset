@@ -1,71 +1,26 @@
-﻿/*
-  Copyright 2016 TUGraz, http://www.tugraz.at/
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  This project has received funding from the European Union’s Horizon
-  2020 research and innovation programme under grant agreement No 644187.
-  You may obtain a copy of the License at
-  
-      http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  
-  This software has been created in the context of the EU-funded RAGE project.
-  Realising and Applied Gaming Eco-System (RAGE), Grant agreement No 644187, 
-  http://rageproject.eu/
-
-  Development was done by Cognitive Science Section (CSS) 
-  at Knowledge Technologies Institute (KTI)at Graz University of Technology (TUGraz).
-  http://kti.tugraz.at/css/
-
-  Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
-*/
-
-using AssetManagerPackage;
+﻿using AssetManagerPackage;
 using AssetPackage;
 using CognitiveInterventionAssetNameSpace;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
-namespace TestCognitiveIntervention
+namespace UnitTestCognitiveIntervention
 {
-    class Program
+    [TestClass]
+    public class TestCaseCI
     {
-        static void Main(string[] args)
-        {
-            AssetManager.Instance.Bridge = new Bridge();
 
-            CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
-
-            //setting feedback method
-            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => Console.WriteLine("DelegateLogging: " + interventionType + ", "+ interventionInstance);
-            cia.setInterventionDelegate(cognitiveInterventionDelegate);
-
-            //start Test
-            TestCognitiveInterventionAsset tcia = new TestCognitiveInterventionAsset();
-            tcia.performAllTests();
-
-            Console.WriteLine("Press enter to exit...");
-            Console.ReadLine();
-        }
-    }
-
-    class TestCognitiveInterventionAsset
-    {
         #region Fields
 
         public int timeToDeactivationOfNodesInMiliSec = 1000;
 
+        public bool testBool;
+
         #endregion Fields
+
         #region HelperMethods
 
         /// <summary>
@@ -238,40 +193,61 @@ namespace TestCognitiveIntervention
 
             return xmlStructure;
         }
-        
+
         #endregion HelperMethods
+
         #region TestMethods
 
         /// <summary>
-        /// Performing all test of the cognitive intervention asset.
+        /// Initialize() is called once during test execution before each and every test method in
+        /// this test class is executed.
         /// </summary>
-        internal void performAllTests()
+        //[TestInitialize]
+        public void Initialize()
         {
-            log("Start performing Cognitive Intervention Asset tests:");
-            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => log("DelegateLogging: " + interventionType + ", " + interventionInstance);
-            performTest1();
-            performTest2();
-            performTest3();
-            performTest4();
-            performTest5();
-            performTest6();
-            log("Cognitive Intervention Asset tests ended.");
+#warning change bridge implementation (in TestCaseCI.cs) for testing (IDataStoragePath and ILog - logging behaviour)
+            //Adding the bridge
+            AssetManager.Instance.Bridge = new Bridge();
+
+            //creating the asset
+            CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
+
+            //setting feedback method
+            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => testBool = true;
+            cia.setInterventionDelegate(cognitiveInterventionDelegate);
+        }
+
+        //Method called before each test case
+        [TestInitialize]
+        public void resetTestBool()
+        {
+            testBool = false;
         }
 
         /// <summary>
         /// Creates and outputs example XMLCognitiveInterventionData
         /// </summary>
-        internal void performTest1()
+        [TestMethod]
+        public void performTest1()
         {
+            Initialize();
             log("Start Test 1");
-            log(createExampleXMLCognitiveInterventionData().toXmlString());
+            try
+            {
+                log(createExampleXMLCognitiveInterventionData().toXmlString());
+            }
+            catch
+            {
+                Assert.Fail();
+            }
             log("End Test 1");
         }
 
         /// <summary>
         /// Creating example CI-structure and only sending "useful"  traces.
         /// </summary>
-        internal void performTest2()
+        [TestMethod]
+        public void performTest2()
         {
             log("Start Test 2");
             setDataSource(createExampleXMLCognitiveInterventionData());
@@ -280,14 +256,16 @@ namespace TestCognitiveIntervention
             getCIA().sendTrace("goTo2");
             getCIA().sendTrace("goTo6");
             getCIA().sendTrace("goTo7");
-            
+
+            Assert.IsFalse(testBool);
             log("End Test 2");
         }
 
         /// <summary>
         /// Creating example CI-structure and not only sending "useful"  traces.
         /// </summary>
-        internal void performTest3()
+        [TestMethod]
+        public void performTest3()
         {
             log("Start Test 3");
             setDataSource(createExampleXMLCognitiveInterventionData());
@@ -298,14 +276,16 @@ namespace TestCognitiveIntervention
             getCIA().sendTrace("goTo5");
             getCIA().sendTrace("goTo6");
             getCIA().sendTrace("goTo7");
-            
+
+            Assert.IsFalse(testBool);
             log("End Test 3");
         }
 
         /// <summary>
         /// Creating example CI-structure and not only sending "useful"  traces plus starting new trace series.
         /// </summary>
-        internal void performTest4()
+        [TestMethod]
+        public void performTest4()
         {
             log("Start Test 4");
             setDataSource(createExampleXMLCognitiveInterventionData());
@@ -319,13 +299,15 @@ namespace TestCognitiveIntervention
             getCIA().sendTrace("goTo3");
             getCIA().sendTrace("goTo7");
 
+            Assert.IsFalse(testBool);
             log("End Test 4");
         }
 
         /// <summary>
         /// Creating example CI-structure and waiting till one node is deactivated.
         /// </summary>
-        internal void performTest5()
+        [TestMethod]
+        public void performTest5()
         {
             log("Start Test 5");
             setDataSource(createExampleXMLCognitiveInterventionData());
@@ -334,13 +316,15 @@ namespace TestCognitiveIntervention
             Thread.Sleep(2 * this.timeToDeactivationOfNodesInMiliSec);
             getCIA().sendTrace("goTo7");
 
+            Assert.IsTrue(true);
             log("End Test 5");
         }
 
         /// <summary>
         /// Method Testing if derivation from anticipated behaviour intervention triggers
         /// </summary>
-        internal void performTest6()
+        [TestMethod]
+        public void performTest6()
         {
             log("Start Test 6");
             setDataSource(createExampleXMLCognitiveInterventionData());
@@ -349,78 +333,79 @@ namespace TestCognitiveIntervention
             Thread.Sleep(2 * this.timeToDeactivationOfNodesInMiliSec);
             getCIA().sendTrace("goTo7");
 
+            Assert.IsFalse(testBool);
             log("Start Test 6");
         }
 
         #endregion TestMethods
 
-    }
 
-    class Bridge : IBridge, ILog, IDataStorage
+    }
+}
+
+class Bridge : IBridge, ILog, IDataStorage
+{
+    string IDataStoragePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\";
+
+    #region IDataStorage
+
+    public bool Delete(string fileId)
     {
-        string IDataStoragePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\";
-
-        #region IDataStorage
-
-        public bool Delete(string fileId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Exists(string fileId)
-        {
-#warning Change DataStorage-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-            string filePath = IDataStoragePath + fileId;
-            return (File.Exists(filePath));
-        }
-
-        public string[] Files()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string Load(string fileId)
-        {
-#warning Change Loading-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-            string filePath = IDataStoragePath + fileId;
-            try
-            {   // Open the text file using a stream reader.
-                using (StreamReader sr = new StreamReader(filePath))
-                {
-                    // Read the stream to a string, and write the string to the console.
-                    String line = sr.ReadToEnd();
-                    return (line);
-                }
-            }
-            catch (Exception e)
-            {
-                Log(Severity.Error,e.Message);
-                Log(Severity.Error, "Error by loading the DM! - Maybe you need to change the path: \"" + IDataStoragePath + "\"");
-            }
-
-            return (null);
-        }
-
-        public void Save(string fileId, string fileData)
-        {
-#warning Change Saving-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-            string filePath = IDataStoragePath + fileId;
-            using (StreamWriter file = new StreamWriter(filePath))
-            {
-                file.Write(fileData);
-            }
-        }
-
-        #endregion IDataStorage
-
-        #region ILog
-
-        public void Log(Severity severity, string msg)
-        {
-            Console.WriteLine("Bridge: " + msg);
-        }
-
-        #endregion ILog
+        throw new NotImplementedException();
     }
 
+    public bool Exists(string fileId)
+    {
+#warning Change DataStorage-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+        string filePath = IDataStoragePath + fileId;
+        return (File.Exists(filePath));
+    }
+
+    public string[] Files()
+    {
+        throw new NotImplementedException();
+    }
+
+    public string Load(string fileId)
+    {
+#warning Change Loading-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+        string filePath = IDataStoragePath + fileId;
+        try
+        {   // Open the text file using a stream reader.
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                // Read the stream to a string, and write the string to the console.
+                String line = sr.ReadToEnd();
+                return (line);
+            }
+        }
+        catch (Exception e)
+        {
+            Log(Severity.Error,e.Message);
+            Log(Severity.Error,"Error by loading the DM! - Maybe you need to change the path: \"" + IDataStoragePath + "\"");
+        }
+
+        return (null);
+    }
+
+    public void Save(string fileId, string fileData)
+    {
+#warning Change Saving-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
+        string filePath = IDataStoragePath + fileId;
+        using (StreamWriter file = new StreamWriter(filePath))
+        {
+            file.Write(fileData);
+        }
+    }
+
+    #endregion IDataStorage
+
+    #region ILog
+
+    public void Log(Severity severity, string msg)
+    {
+        Console.WriteLine("Bridge: " + msg);
+    }
+
+    #endregion ILog
 }

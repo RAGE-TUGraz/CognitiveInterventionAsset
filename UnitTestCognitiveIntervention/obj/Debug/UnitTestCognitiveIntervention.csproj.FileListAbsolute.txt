@@ -1,0 +1,11 @@
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\UnitTestCognitiveIntervention.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\UnitTestCognitiveIntervention.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\CognitiveInterventionAsset.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\RageAssetManager.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\CognitiveInterventionAsset.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\RageAssetManager.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\RageAssetManager.xml
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\obj\Debug\UnitTestCognitiveIntervention.csprojResolveAssemblyReference.cache
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\obj\Debug\UnitTestCognitiveIntervention.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\obj\Debug\UnitTestCognitiveIntervention.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\UnitTestCognitiveIntervention\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll

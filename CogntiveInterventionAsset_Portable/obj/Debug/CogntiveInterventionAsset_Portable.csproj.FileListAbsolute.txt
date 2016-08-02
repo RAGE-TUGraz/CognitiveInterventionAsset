@@ -1,0 +1,5 @@
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CogntiveInterventionAsset_Portable\bin\Debug\CognitiveInterventionAsset_Portable.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CogntiveInterventionAsset_Portable\bin\Debug\CognitiveInterventionAsset_Portable.pdb
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CogntiveInterventionAsset_Portable\bin\Debug\RageAssetManager_Portable.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CogntiveInterventionAsset_Portable\obj\Debug\CognitiveInterventionAsset_Portable.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\CogntiveInterventionAsset_Portable\obj\Debug\CognitiveInterventionAsset_Portable.pdb
