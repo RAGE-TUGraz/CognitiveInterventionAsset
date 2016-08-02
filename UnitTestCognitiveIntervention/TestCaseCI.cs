@@ -202,27 +202,25 @@ namespace UnitTestCognitiveIntervention
         /// Initialize() is called once during test execution before each and every test method in
         /// this test class is executed.
         /// </summary>
-        //[TestInitialize]
+        [TestInitialize]
         public void Initialize()
         {
-#warning change bridge implementation (in TestCaseCI.cs) for testing (IDataStoragePath and ILog - logging behaviour)
-            //Adding the bridge
-            AssetManager.Instance.Bridge = new Bridge();
-
-            //creating the asset
-            CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
-
-            //setting feedback method
-            CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => testBool = true;
-            cia.setInterventionDelegate(cognitiveInterventionDelegate);
-        }
-
-        //Method called before each test case
-        [TestInitialize]
-        public void resetTestBool()
-        {
             testBool = false;
+            if (AssetManager.Instance.findAssetsByClass("CognitiveInterventionAsset").Count == 0)
+            {
+#warning change bridge implementation (in TestCaseCI.cs) for testing (IDataStoragePath and ILog - logging behaviour)
+                //Adding the bridge
+                AssetManager.Instance.Bridge = new Bridge();
+
+                //creating the asset
+                CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
+
+                //setting feedback method
+                CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => testBool = true;
+                cia.setInterventionDelegate(cognitiveInterventionDelegate);
+            }
         }
+
 
         /// <summary>
         /// Creates and outputs example XMLCognitiveInterventionData
