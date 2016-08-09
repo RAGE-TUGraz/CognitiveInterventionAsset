@@ -8,3 +8,6 @@ C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\T
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\obj\Debug\TestCognitiveIntervention.exe
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\obj\Debug\TestCognitiveIntervention.pdb
 C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\bin\Debug\RageAssetManager.xml
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\bin\Debug\UnitTestCognitiveIntervention.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\mmaurer\Documents\Visual Studio 2015\Projects\A_CognitiveIntervention\TestCognitiveIntervention\bin\Debug\UnitTestCognitiveIntervention.pdb

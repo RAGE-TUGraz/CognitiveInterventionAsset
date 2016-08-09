@@ -52,6 +52,10 @@
       <Project>{4d1f98c7-6827-4f99-b676-f5c9af632609}</Project>
       <Name>CognitiveInterventionAsset</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UnitTestCognitiveIntervention\UnitTestCognitiveIntervention.csproj">
+      <Project>{b4c1c93d-27ca-4176-99d4-7ab8885709a7}</Project>
+      <Name>UnitTestCognitiveIntervention</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

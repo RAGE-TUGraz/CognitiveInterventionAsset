@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace UnitTestCognitiveIntervention
@@ -208,7 +209,7 @@ namespace UnitTestCognitiveIntervention
             testBool = false;
             if (AssetManager.Instance.findAssetsByClass("CognitiveInterventionAsset").Count == 0)
             {
-#warning change bridge implementation (in TestCaseCI.cs) for testing (IDataStoragePath and ILog - logging behaviour)
+#warning change bridge implementation (in UnitTestCognitiveIntervention/Bridge.cs) for testing (IDataStoragePath and ILog - logging behaviour)
                 //Adding the bridge
                 AssetManager.Instance.Bridge = new Bridge();
 
@@ -341,69 +342,4 @@ namespace UnitTestCognitiveIntervention
     }
 }
 
-class Bridge : IBridge, ILog, IDataStorage
-{
-    string IDataStoragePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\";
 
-    #region IDataStorage
-
-    public bool Delete(string fileId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Exists(string fileId)
-    {
-#warning Change DataStorage-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-        string filePath = IDataStoragePath + fileId;
-        return (File.Exists(filePath));
-    }
-
-    public string[] Files()
-    {
-        throw new NotImplementedException();
-    }
-
-    public string Load(string fileId)
-    {
-#warning Change Loading-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-        string filePath = IDataStoragePath + fileId;
-        try
-        {   // Open the text file using a stream reader.
-            using (StreamReader sr = new StreamReader(filePath))
-            {
-                // Read the stream to a string, and write the string to the console.
-                String line = sr.ReadToEnd();
-                return (line);
-            }
-        }
-        catch (Exception e)
-        {
-            Log(Severity.Error,e.Message);
-            Log(Severity.Error,"Error by loading the DM! - Maybe you need to change the path: \"" + IDataStoragePath + "\"");
-        }
-
-        return (null);
-    }
-
-    public void Save(string fileId, string fileData)
-    {
-#warning Change Saving-path if needed in Program.cs, Class Bridge, Variable IDataStoragePath
-        string filePath = IDataStoragePath + fileId;
-        using (StreamWriter file = new StreamWriter(filePath))
-        {
-            file.Write(fileData);
-        }
-    }
-
-    #endregion IDataStorage
-
-    #region ILog
-
-    public void Log(Severity severity, string msg)
-    {
-        Console.WriteLine("Bridge: " + msg);
-    }
-
-    #endregion ILog
-}
