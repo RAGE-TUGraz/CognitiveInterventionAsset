@@ -53,7 +53,15 @@ namespace TestCognitiveIntervention
 
             //start Test
             TestCognitiveInterventionAsset tcia = new TestCognitiveInterventionAsset();
-            tcia.performAllTests();
+            //tcia.performAllTests();
+
+            CognitiveInterventionAssetSettings cias = new CognitiveInterventionAssetSettings();
+            cias.XMLFileLocation = "demoGameCognitiveIntervention.xml";
+            cia.Settings = cias;
+
+            cia.sendTrace("failure additionGS");
+            cia.sendTrace("failure sortGS");
+            cia.sendTrace("failure additionGS");
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();

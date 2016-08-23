@@ -136,6 +136,17 @@ function saveTextAsFile(textToWrite){
     downloadLink.click();
 }
 
+function openFile(event) {
+    var input = event.target;
+
+    var reader = new FileReader();
+    reader.onload = function () {
+        var text = reader.result;
+        menu.menuArray[6].readInXML(text);
+    };
+    reader.readAsText(input.files[0]);
+};
+
 //Method for creating the XML-string out of the information gathered from the user
 function createXML(){
 	return menu.toXML();
@@ -185,6 +196,7 @@ function Menu() {
 	this.menuArray[3] = new Menu3();
 	this.menuArray[4] = new Menu4();
 	this.menuArray[5] = new Menu5();
+	this.menuArray[6] = new Menu6();
 	this.fillHTML = function(div){
 		var html = this.menuArray[this.activeMenu].fillHTML(div);
 	};
@@ -810,6 +822,85 @@ function Menu5() {
     };
 }
 
+function Menu6() {
+    this.fillHTML = function (div) {
+        var html = "<h3>Upload XML structure</h3>";
+        html += "<input type='file' id='selectedFile' style='display: none;' onchange='openFile(event);' />";
+        html += "<input type='button' value='Browse...' onclick=\"document.getElementById('selectedFile').click();\" />";
+        document.getElementById(div).innerHTML = html;
+    };
+    this.getParser = function (xml) {
+        if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(xml, "text/xml");
+        }
+        else // Internet Explorer
+        {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(xml);
+        }
+        return (xmlDoc);
+    };
+    this.readInXML = function (xml) {
+        //alert(xml);
+
+        //delete old data
+        var data = menu.data;
+        data.interventionTypes = [];
+        data.interventionInstances = [];
+        data.tree = new Tree();
+        var tree = data.tree;
+
+        //fill data
+        parser = this.getParser(xml);
+        var cogTypes = parser.getElementsByTagName('cognitiveinterventiontype');
+        for (var i = 0; i < cogTypes.length; i++) {
+            var cogTypeString = cogTypes[i].getElementsByTagName('typeid')[0].childNodes[0].nodeValue;
+            var instances = cogTypes[i].getElementsByTagName('instance');
+            var instanceString = [];
+            for (var j = 0; j < instances.length; j++) {
+                var instance = instances[j].childNodes[0].nodeValue;
+                instanceString.push(instance);
+            }
+            data.interventionTypes.push(cogTypeString);
+            data.interventionInstances.push(instanceString);
+        }
+
+        var nodesParser = parser.getElementsByTagName('cognitiveinterventionnode');
+        //adding nodes
+        for (var i = 0; i < nodesParser.length; i++) {
+            var nodeId = nodesParser[i].getElementsByTagName('nodeid')[0].childNodes[0].nodeValue;
+            var activationDuration = nodesParser[i].getElementsByTagName('activationDuration')[0].childNodes[0].nodeValue;
+            var interventiontype;
+            if (nodesParser[i].getElementsByTagName('interventiontype')[0].childNodes.length > 0)
+                interventiontype = nodesParser[i].getElementsByTagName('interventiontype')[0].childNodes[0].nodeValue;
+            else
+                interventiontype = "";
+
+            tree.addNode(nodeId);
+            var node = tree.getNodeById(nodeId);
+            node.deactivationTimeMS = activationDuration;
+            if (interventiontype != "")
+                node.interventionType = interventiontype;
+        }
+        //adding edges
+        for (var i = 0; i < nodesParser.length; i++) {
+            var nodeId = nodesParser[i].getElementsByTagName('nodeid')[0].childNodes[0].nodeValue;
+            var node = tree.getNodeById(nodeId);
+
+            var edges = nodesParser[i].getElementsByTagName('cognitiveinterventionedge');
+            for (var j = 0; j < edges.length; j++) {
+                var successorid = edges[j].getElementsByTagName('successorid')[0].childNodes[0].nodeValue;
+                var trackingid = edges[j].getElementsByTagName('trackingid')[0].childNodes[0].nodeValue;
+                tree.addEdge(nodeId, successorid);
+                var edge = node.getEdgeByEndNodeId(successorid);
+                edge.trigger = trackingid;
+            }
+        }
+    };
+}
+
 //object holding all data
 function Data() {
     this.tree = new Tree();
@@ -841,9 +932,13 @@ function Tree() {
                 sol = i;
             }
         }
+        if (sol == -1)
+            return null;
         return (this.nodeList[sol]);
     };
     this.addNode = function (nodeId) {
+        if (this.getNodeById(nodeId) != null)
+            return;
         var node = new Node(nodeId);
         node.deactivationTimeMS = menu.data.defaultDeactivationTime;
         this.nodeList.push(node);
@@ -1031,6 +1126,8 @@ function Node(id) {
             document.getElementById('delete-' + this.id).addEventListener("click", function () {
                 var id = this.id.substring(7, this.id.length);
                 menu.data.tree.deleteNodeById(id);
+                ///////////////////////////
+                menu.menuArray[3].selectedNode = "";
                 menu.getActiveMenu().paintGraph();
             });
         }
@@ -1155,6 +1252,7 @@ function Edge(nodeStart, nodeEnd) {
 <div id='m3' class='menu hover'>tracking structure</div>
 <div id='m5' class='menu hover'>add tracking series</div>
 <div id='m4' class='menu hover'>download XML</div>
+<div id='m6' class='menu hover'>upload XML</div>
 <div id='dataInputField'>
 Chose a menu and start filling in the asset specifications.
 </div>
