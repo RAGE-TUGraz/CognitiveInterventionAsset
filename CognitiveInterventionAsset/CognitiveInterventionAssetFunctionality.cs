@@ -596,7 +596,7 @@ namespace CognitiveInterventionAssetNameSpace
             if (nodeToActivate.edges.Count == 0)
             {
                 //...if there is any to perform
-                if (nodeToActivate.interventionType != null)
+                if (nodeToActivate.interventionType != null && nodeToActivate.interventionType != "")
                     performIntervention(nodeToActivate.interventionType);
                 deactivateNode(nodeToActivate);
             }
@@ -666,15 +666,23 @@ namespace CognitiveInterventionAssetNameSpace
         /// <param name="interventionType"> String identifyier for the intervention type. </param>
         internal void performIntervention(string interventionType)
         {
+            if (!this.interventions.ContainsKey(interventionType))
+                CognitiveInterventionHandler.Instance.loggingCI("Cant find the requested interventiontype '"+interventionType+"'!");
+
             List<string> interventionInstances = this.interventions[interventionType];
+            
 
             //initialize instance counter, if not done yet
             if (interventionInstanceCounter == null)
             {
                 interventionInstanceCounter = new Dictionary<string, int>();
                 foreach(string interventionTypeString in this.interventions.Keys)
-                    foreach(string interventionInstanceString in this.interventions[interventionTypeString])
+                {
+                    foreach (string interventionInstanceString in this.interventions[interventionTypeString])
+                    {
                         interventionInstanceCounter[interventionInstanceString] = 0;
+                    }
+                }
             }
 
             //get those intervention, which are choosen the least often
@@ -682,12 +690,12 @@ namespace CognitiveInterventionAssetNameSpace
             foreach (string instance in interventionInstances)
                 if (leastOftenChosenInstanceNr == -1 || leastOftenChosenInstanceNr > interventionInstanceCounter[instance])
                     leastOftenChosenInstanceNr = interventionInstanceCounter[instance];
-
+            
             List<string> leastOftenChosenInstances = new List<string>();
             foreach (string instance in interventionInstances)
                 if (interventionInstanceCounter[instance] == leastOftenChosenInstanceNr)
                     leastOftenChosenInstances.Add(instance);
-
+            
             //choose random instance
             Random rnd = new Random();
             int pos = rnd.Next(leastOftenChosenInstances.Count);
@@ -695,7 +703,7 @@ namespace CognitiveInterventionAssetNameSpace
 
             //upate counter
             interventionInstanceCounter[chosenInstance]++;
-            
+
             CognitiveInterventionHandler.Instance.loggingCI("Proposed intervention-instance: " + chosenInstance);
             if(CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate == null)
             {
@@ -838,8 +846,11 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         internal void triggerDerivationFromAnticipatedBehaviourIntervention()
         {
-            CognitiveInterventionHandler.Instance.loggingCI("Triggering intervention due to derivation from anticipated behaviour.");
-            CognitiveInterventionHandler.Instance.cognitiveInterventionTree.performIntervention(this.interventionType);
+            if (this.interventionType != null && this.interventionType != "")
+            {
+                CognitiveInterventionHandler.Instance.loggingCI("Triggering intervention due to derivation from anticipated behaviour.");
+                CognitiveInterventionHandler.Instance.cognitiveInterventionTree.performIntervention(this.interventionType);
+            }
         }
 
         #endregion Methods
