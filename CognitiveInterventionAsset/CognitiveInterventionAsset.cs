@@ -122,6 +122,14 @@ namespace CognitiveInterventionAssetNameSpace
             CognitiveInterventionHandler.Instance.addNewTrack(trace);
         }
 
+        /// <summary>
+        /// Method for intervention trigger check
+        /// </summary>
+        public void refresh()
+        {
+            CognitiveInterventionHandler.Instance.refresh();
+        }
+
         #endregion Methods
 
         #region InternalMethods

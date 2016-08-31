@@ -196,6 +196,21 @@ namespace CognitiveInterventionAssetNameSpace
             }
         }
 
+        /// <summary>
+        /// Method for intervention trigger check
+        /// </summary>
+        internal void refresh()
+        {
+            CognitiveInterventionTree tree = getCognitiveInterventionTree();
+
+            List<string> listOfActiveNodeIds = tree.getListOfActiveNodeIds();
+            foreach (string nodeId in listOfActiveNodeIds)
+            {
+                CognitiveInterventionNode node = tree.getCognitiveInterventionNodeById(nodeId);
+                node.isStillActive();
+            }
+        }
+
         #endregion Methods
         #region Testmethods
 
