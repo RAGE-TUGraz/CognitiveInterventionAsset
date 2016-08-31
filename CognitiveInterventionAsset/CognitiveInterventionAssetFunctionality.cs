@@ -163,6 +163,9 @@ namespace CognitiveInterventionAssetNameSpace
             loggingCI("New track added: '"+track+"'.");
             CognitiveInterventionTree tree = getCognitiveInterventionTree();
 
+            foreach (CognitiveInterventionNode node in this.cognitiveInterventionTree.nodes)
+                node.wasActivatedThisUpdate = false;
+
             List<string> listOfActiveNodeIds = tree.getListOfActiveNodeIds();
             foreach(string nodeId in listOfActiveNodeIds)
             {
@@ -174,6 +177,7 @@ namespace CognitiveInterventionAssetNameSpace
                             tree.setActive(node, track);
             }
             tree.logActiveNodes();
+            
         }
 
         /// <summary>
@@ -619,8 +623,12 @@ namespace CognitiveInterventionAssetNameSpace
 
             //deactivate node if it is an exclusive edge
             if (edge.exclusive && !this.startingNode.id.Equals(startingNode.id))
-                deactivateNode(startingNode);
-            else {
+            {
+                if(!startingNode.wasActivatedThisUpdate)
+                    deactivateNode(startingNode);
+            }
+            else
+            {
                 //deactivate node if all edges are deactivated
                 bool anActiveEdgeExists = false;
                 foreach (string trackIterator in startingNode.edges.Keys)
@@ -632,6 +640,7 @@ namespace CognitiveInterventionAssetNameSpace
 
             //activate new edge
             activateNode(edge.successor);
+            edge.successor.wasActivatedThisUpdate = true;
         }
 
         /// <summary>
@@ -793,7 +802,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         internal DateTime deactivationTimestamp;
 
-
+        internal bool wasActivatedThisUpdate = false;
 
         /// <summary>
         /// Describes how long a node is active before deactivating again.
