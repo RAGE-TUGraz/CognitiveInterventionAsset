@@ -132,7 +132,7 @@ namespace CognitiveInterventionAssetNameSpace
         internal void loadCognitiveInterventionTree()
         {
             loggingCI("Loading CognitiveIntervention XML-datastructure.");
-            CognitiveInterventionAssetSettings cias = getCIA().getSettings();
+            CognitiveInterventionAssetSettings cias = (CognitiveInterventionAssetSettings) getCIA().Settings;
 
             IDataStorage ids = (IDataStorage)AssetManager.Instance.Bridge;
             if (ids != null)

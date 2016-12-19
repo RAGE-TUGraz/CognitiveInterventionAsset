@@ -132,17 +132,6 @@ namespace CognitiveInterventionAssetNameSpace
 
         #endregion Methods
 
-        #region InternalMethods
-        /// <summary>
-        /// Method for reading the Asset settings.
-        /// </summary>
-        /// <returns></returns>
-        internal CognitiveInterventionAssetSettings getSettings()
-        {
-            return (this.settings);
-        }
-        #endregion InternalMethods
-
     }
 
 }
