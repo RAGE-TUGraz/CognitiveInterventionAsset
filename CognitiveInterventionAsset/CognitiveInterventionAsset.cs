@@ -28,15 +28,10 @@
 namespace CognitiveInterventionAssetNameSpace
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     using AssetManagerPackage;
     using AssetPackage;
-    using System.Xml.Serialization;
-    using System.IO;
-    using System.Xml;
-    
+
     /// <summary>
     /// An asset.
     /// </summary>
