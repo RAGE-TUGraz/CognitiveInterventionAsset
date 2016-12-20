@@ -35,9 +35,11 @@ namespace CognitiveInterventionAssetNameSpace
     using AssetPackage;
     using System.Xml.Serialization;
     using System.IO;
-    using System.Xml;/// <summary>
-                     /// An asset.
-                     /// </summary>
+    using System.Xml;
+    
+    /// <summary>
+    /// An asset.
+    /// </summary>
     public class CognitiveInterventionAsset : BaseAsset
     {
         #region Fields
