@@ -53,7 +53,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <summary>
         /// Instance of the CognitiveInterventionHandler - Singelton pattern
         /// </summary>
-        private static CognitiveInterventionHandler instance;
+        static readonly CognitiveInterventionHandler instance = new CognitiveInterventionHandler();
 
         /// <summary>
         /// If true, logging is done.
@@ -93,12 +93,9 @@ namespace CognitiveInterventionAssetNameSpace
         {
             get
             {
-                if (instance == null)
-                {
-                    instance = new CognitiveInterventionHandler();
-                }
                 return instance;
             }
+
         }
 
         #endregion Properties
