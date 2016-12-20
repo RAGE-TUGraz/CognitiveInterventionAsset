@@ -83,8 +83,7 @@ namespace TestCognitiveIntervention
         /// <param name="msg"> Message to be logged </param>
         public void log(String msg, Severity severity = Severity.Information)
         {
-            ILog logger = (ILog)AssetManager.Instance.Bridge;
-            logger.Log(severity, "[CIA Test]" + msg);
+            AssetManager.Instance.Log(severity, "[CIA Test]: {0}", msg);
         }
 
         /// <summary>
