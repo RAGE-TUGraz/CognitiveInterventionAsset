@@ -34,7 +34,7 @@ namespace UnitTestCognitiveIntervention
 {
     public class Bridge : IBridge, ILog, IDataStorage
     {
-        string IDataStoragePath = @"C:\Users\mmaurer\Desktop\rageCsFiles\";
+        string IDataStoragePath = "./";
 
         #region IDataStorage
 
