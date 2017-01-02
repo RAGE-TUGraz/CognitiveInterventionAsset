@@ -45,7 +45,6 @@ namespace CognitiveInterventionAssetNameSpace
         private CognitiveInterventionAssetSettings settings = null;
 
         #endregion Fields
-
         #region Constructors
 
         /// <summary>
@@ -65,6 +64,7 @@ namespace CognitiveInterventionAssetNameSpace
                 throw new Exception("EXCEPTION: There is only one instance of the CognitiveInterventionAssetSettings permitted!");
             }
 
+            CognitiveInterventionHandler.Instance.cognitiveInterventionAsset = this;
         }
 
         #endregion Constructors

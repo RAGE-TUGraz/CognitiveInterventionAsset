@@ -104,8 +104,6 @@ namespace CognitiveInterventionAssetNameSpace
         /// <returns> Instance of the CognitiveInterventionAsset </returns>
         internal CognitiveInterventionAsset getCIA()
         {
-            if (cognitiveInterventionAsset == null)
-                cognitiveInterventionAsset = (CognitiveInterventionAsset)AssetManager.Instance.findAssetByClass("CognitiveInterventionAsset");
             return (cognitiveInterventionAsset);
         }
 
