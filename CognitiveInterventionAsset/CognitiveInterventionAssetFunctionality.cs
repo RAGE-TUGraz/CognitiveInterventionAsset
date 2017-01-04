@@ -48,19 +48,9 @@ namespace CognitiveInterventionAssetNameSpace
         #region Fields
 
         /// <summary>
-        /// Instance of the CognitiveInterventionHandler - Singelton pattern
-        /// </summary>
-        static readonly CognitiveInterventionHandler instance = new CognitiveInterventionHandler();
-
-        /// <summary>
         /// If true, logging is done.
         /// </summary>
         internal bool doLogging = true;
-
-        /// <summary>
-        /// Instance of the CognitiveInterventionAsset.
-        /// </summary>
-        internal CognitiveInterventionAsset cognitiveInterventionAsset;
 
         /// <summary>
         /// Instance of the CognitiveInterventionTree - base for working on track pattern recognition.
@@ -78,23 +68,10 @@ namespace CognitiveInterventionAssetNameSpace
         /// <summary>
         /// Private ctor - Singelton pattern
         /// </summary>
-        private CognitiveInterventionHandler() { }
+        public CognitiveInterventionHandler() { }
 
         #endregion Constructors
         #region Properties
-
-        /// <summary>
-        /// Getter for Instance of the CognitiveInterventionHandler - Singelton pattern
-        /// </summary>
-        public static CognitiveInterventionHandler Instance
-        {
-            get
-            {
-                return instance;
-            }
-
-        }
-
         #endregion Properties
         #region Methods
 
@@ -104,7 +81,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <returns> Instance of the CognitiveInterventionAsset </returns>
         internal CognitiveInterventionAsset getCIA()
         {
-            return (cognitiveInterventionAsset);
+            return CognitiveInterventionAsset.Instance;
         }
 
         /// <summary>
@@ -333,7 +310,7 @@ namespace CognitiveInterventionAssetNameSpace
         {
             if (nodeToDeactivate.id.Equals(this.startingNode.id))
                 return;
-            CognitiveInterventionHandler.Instance.loggingCI("Deactivating Node '"+nodeToDeactivate.id+"'.");
+            CognitiveInterventionAsset.Handler.loggingCI("Deactivating Node '"+nodeToDeactivate.id+"'.");
             this.activeNodes.Remove(nodeToDeactivate);
         }
 
@@ -343,7 +320,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <param name="nodeToActivate"> Node which gets activated </param>
         internal void activateNode(CognitiveInterventionNode nodeToActivate)
         {
-            CognitiveInterventionHandler.Instance.loggingCI("Activating Node '" + nodeToActivate.id + "'.");
+            CognitiveInterventionAsset.Handler.loggingCI("Activating Node '" + nodeToActivate.id + "'.");
 
             if (!this.activeNodes.Contains(nodeToActivate))
                 this.activeNodes.Add(nodeToActivate);
@@ -370,7 +347,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <param name="track"> Tracking id for setting the node active. </param>
         internal void setActive(CognitiveInterventionNode startingNode, string track)
         {
-            CognitiveInterventionHandler.Instance.loggingCI("New update: starting from Node '"+startingNode.id+"' because of track '"+track+"'.");
+            CognitiveInterventionAsset.Handler.loggingCI("New update: starting from Node '"+startingNode.id+"' because of track '"+track+"'.");
 
             CognitiveInterventionEdge edge = startingNode.edges[track];
 
@@ -409,7 +386,7 @@ namespace CognitiveInterventionAssetNameSpace
             txt += "Active nodes:\n ";
             foreach (CognitiveInterventionNode node in this.activeNodes)
                 txt += node.id+" | ";
-            CognitiveInterventionHandler.Instance.loggingCI(txt);
+            CognitiveInterventionAsset.Handler.loggingCI(txt);
         }
 
         /// <summary>
@@ -433,7 +410,7 @@ namespace CognitiveInterventionAssetNameSpace
         internal void performIntervention(string interventionType)
         {
             if (!this.interventions.ContainsKey(interventionType))
-                CognitiveInterventionHandler.Instance.loggingCI("Cant find the requested interventiontype '"+interventionType+"'!");
+                CognitiveInterventionAsset.Handler.loggingCI("Cant find the requested interventiontype '"+interventionType+"'!");
 
             List<string> interventionInstances = this.interventions[interventionType];
             
@@ -470,13 +447,13 @@ namespace CognitiveInterventionAssetNameSpace
             //upate counter
             interventionInstanceCounter[chosenInstance]++;
 
-            CognitiveInterventionHandler.Instance.loggingCI("Proposed intervention-instance: " + chosenInstance);
-            if(CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate == null)
+            CognitiveInterventionAsset.Handler.loggingCI("Proposed intervention-instance: " + chosenInstance);
+            if(CognitiveInterventionAsset.Handler.cognitiveInterventionDelegate == null)
             {
-                CognitiveInterventionHandler.Instance.loggingCI("There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!", Severity.Error);
+                CognitiveInterventionAsset.Handler.loggingCI("There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!", Severity.Error);
                 throw new Exception("EXCEPTION: There was no method defined (via the asset method 'setInterventionDelegate') for handling cognitive intervention events!");
             }
-            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate(interventionType, chosenInstance);
+            CognitiveInterventionAsset.Handler.cognitiveInterventionDelegate(interventionType, chosenInstance);
         }
 
         /* NOT TESTED!
@@ -595,14 +572,14 @@ namespace CognitiveInterventionAssetNameSpace
         {
             //return true;
             
-            if(DateTime.Now < deactivationTimestamp || CognitiveInterventionHandler.Instance.cognitiveInterventionTree.startingNode.id.Equals(this.id))
+            if(DateTime.Now < deactivationTimestamp || CognitiveInterventionAsset.Handler.cognitiveInterventionTree.startingNode.id.Equals(this.id))
                 return true;
 
-            CognitiveInterventionHandler.Instance.loggingCI("Deactivating node '"+id+"' because too much time passed by without any relevant action.");
+            CognitiveInterventionAsset.Handler.loggingCI("Deactivating node '"+id+"' because too much time passed by without any relevant action.");
             //trigger intervention because of divergence to anticipated behaviour, if needed
             if(this.interventionType != null)
                 triggerDerivationFromAnticipatedBehaviourIntervention();
-            CognitiveInterventionHandler.Instance.cognitiveInterventionTree.deactivateNode(this);
+            CognitiveInterventionAsset.Handler.cognitiveInterventionTree.deactivateNode(this);
             return false;
             
         }
@@ -614,8 +591,8 @@ namespace CognitiveInterventionAssetNameSpace
         {
             if (this.interventionType != null && this.interventionType != "")
             {
-                CognitiveInterventionHandler.Instance.loggingCI("Triggering intervention due to derivation from anticipated behaviour.");
-                CognitiveInterventionHandler.Instance.cognitiveInterventionTree.performIntervention(this.interventionType);
+                CognitiveInterventionAsset.Handler.loggingCI("Triggering intervention due to derivation from anticipated behaviour.");
+                CognitiveInterventionAsset.Handler.cognitiveInterventionTree.performIntervention(this.interventionType);
             }
         }
 

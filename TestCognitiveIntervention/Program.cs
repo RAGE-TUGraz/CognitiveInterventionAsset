@@ -42,7 +42,7 @@ namespace TestCognitiveIntervention
         {
             AssetManager.Instance.Bridge = new Bridge();
 
-            CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
+            CognitiveInterventionAsset cia = CognitiveInterventionAsset.Instance;
 
             //setting feedback method
             CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => Console.WriteLine("DelegateLogging: " + interventionType + ", "+ interventionInstance);

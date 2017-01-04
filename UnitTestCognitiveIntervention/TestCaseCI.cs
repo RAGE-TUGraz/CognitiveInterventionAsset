@@ -240,7 +240,7 @@ namespace UnitTestCognitiveIntervention
                 AssetManager.Instance.Bridge = new Bridge();
 
                 //creating the asset
-                CognitiveInterventionAsset cia = new CognitiveInterventionAsset();
+                CognitiveInterventionAsset cia = CognitiveInterventionAsset.Instance;
 
                 //setting feedback method
                 CognitiveInterventionDelegate cognitiveInterventionDelegate = (interventionType, interventionInstance) => testBool = true;

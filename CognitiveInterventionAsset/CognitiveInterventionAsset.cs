@@ -44,27 +44,27 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         private CognitiveInterventionAssetSettings settings = null;
 
+        /// <summary>
+        /// Instance of the CognitiveInterventionAsset - Singelton pattern
+        /// </summary>
+        static readonly CognitiveInterventionAsset instance = new CognitiveInterventionAsset();
+
+        /// <summary>
+        /// Instance of the CognitiveInterventionHandler 
+        /// </summary>
+        static internal CognitiveInterventionHandler cognitiveInterventionHandler = new CognitiveInterventionHandler();
+        
         #endregion Fields
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CognitiveInterventionAsset.Asset class.
         /// </summary>
-        public CognitiveInterventionAsset()
+        private CognitiveInterventionAsset()
             : base()
         {
             //! Create Settings and let it's BaseSettings class assign Defaultvalues where it can.
-            // 
             settings = new CognitiveInterventionAssetSettings();
-
-            //preventing multiple asset creation
-            if (AssetManager.Instance.findAssetsByClass(this.Class).Count > 1)
-            {
-                this.Log(Severity.Error, "There is only one instance of the CognitiveInterventionAssetSettings permitted!");
-                throw new Exception("EXCEPTION: There is only one instance of the CognitiveInterventionAssetSettings permitted!");
-            }
-
-            CognitiveInterventionHandler.Instance.cognitiveInterventionAsset = this;
         }
 
         #endregion Constructors
@@ -92,14 +92,36 @@ namespace CognitiveInterventionAssetNameSpace
             set
             {
                 settings = (value as CognitiveInterventionAssetSettings);
-                CognitiveInterventionHandler.Instance.loadCognitiveInterventionTree();
+                CognitiveInterventionAsset.Handler.loadCognitiveInterventionTree();
             }
+        }
+
+        /// <summary>
+        /// Getter for Instance of the CognitiveInterventionAsset - Singelton pattern
+        /// </summary>
+        public static CognitiveInterventionAsset Instance
+        {
+            get
+            {
+                return instance;
+            }
+
+        }
+
+        /// <summary>
+        /// Getter for Instance of the CognitiveInterventionHandler 
+        /// </summary>
+        internal static CognitiveInterventionHandler Handler
+        {
+            get
+            {
+                return cognitiveInterventionHandler;
+            }
+
         }
 
         #endregion Properties
         #region Methods
-
-        // Your code goes here.
 
         /// <summary>
         /// Methode for setting the Method for handling cognitive interventions
@@ -107,7 +129,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <param name="del"> Method (signature: void del(string interventionInstance)) performed if an intervention is needed. </param>
         public void setInterventionDelegate(CognitiveInterventionDelegate del)
         {
-            CognitiveInterventionHandler.Instance.cognitiveInterventionDelegate = del;
+            Handler.cognitiveInterventionDelegate = del;
         }
 
         /// <summary>
@@ -116,7 +138,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// <param name="trace"></param>
         public void sendTrace(string trace)
         {
-            CognitiveInterventionHandler.Instance.addNewTrack(trace);
+            Handler.addNewTrack(trace);
         }
 
         /// <summary>
@@ -124,7 +146,7 @@ namespace CognitiveInterventionAssetNameSpace
         /// </summary>
         public void refresh()
         {
-            CognitiveInterventionHandler.Instance.refresh();
+            Handler.refresh();
         }
 
         #endregion Methods
