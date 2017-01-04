@@ -26,8 +26,6 @@
   Created by: Matthias Maurer, TUGraz <mmaurer@tugraz.at>
 */
 
-
-using AssetManagerPackage;
 using AssetPackage;
 using System;
 using System.Collections.Generic;
@@ -102,8 +100,8 @@ namespace CognitiveInterventionAssetNameSpace
         {
             loggingCI("Loading CognitiveIntervention XML-datastructure.");
             CognitiveInterventionAssetSettings cias = (CognitiveInterventionAssetSettings) getCIA().Settings;
-
-            IDataStorage ids = (IDataStorage)AssetManager.Instance.Bridge;
+            
+            IDataStorage ids = CognitiveInterventionAsset.Instance.getInterfaceFromAsset<IDataStorage>();
             if (ids != null)
             {
                 if (!ids.Exists(cias.XMLFileLocation))

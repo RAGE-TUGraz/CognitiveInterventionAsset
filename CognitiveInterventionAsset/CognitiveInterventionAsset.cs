@@ -27,9 +27,6 @@
 */
 namespace CognitiveInterventionAssetNameSpace
 {
-    using System;
-
-    using AssetManagerPackage;
     using AssetPackage;
 
     /// <summary>
